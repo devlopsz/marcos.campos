@@ -1,0 +1,2598 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marcos Campos</title>
+  <meta name="description" content="Portal de empreendimentos de Marcos Campos com busca, filtros, cards, detalhes e contato." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090b10;
+      --bg2: #0f121a;
+      --surface: #151922;
+      --surface2: #1d2330;
+      --surface3: #252d3c;
+      --card: #111722;
+      --line: rgba(255,255,255,.10);
+      --line2: rgba(255,255,255,.16);
+      --text: #f5f7fb;
+      --muted: #aab3c2;
+      --muted2: #7f899a;
+      --gold: #d6b35a;
+      --purple: #a855f7;
+      --purple2: #7c3aed;
+      --blue: #0b409c;
+      --blue2: #124fb9;
+      --green: #25D366;
+      --red: #e11d48;
+      --orange: #f59e0b;
+      --radius: 18px;
+      --shadow: 0 24px 80px rgba(0,0,0,.38);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, input, select { font: inherit; }
+
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 58px;
+      background: rgba(9,11,16,.88);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(16px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+    }
+    .brand-mini { display: flex; align-items: center; gap: 10px; font-weight: 900; letter-spacing: -.3px; }
+    .brand-mark {
+      width: 31px; height: 31px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--purple), var(--purple2));
+      display: grid; place-items: center;
+      font-weight: 900;
+    }
+    .menu-toggle {
+      width: 40px; height: 40px; border: 0; border-radius: 12px;
+      background: rgba(255,255,255,.08);
+      display: flex; flex-direction: column; gap: 5px; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    .menu-toggle span { width: 20px; height: 2px; background: #fff; border-radius: 5px; }
+    .menu-toggle:hover { background: rgba(255,255,255,.14); }
+
+    .sidebar-overlay {
+      position: fixed; inset: 0; z-index: 1500;
+      background: rgba(0,0,0,.65); backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none; transition: .25s;
+    }
+    .sidebar-overlay.open { opacity: 1; pointer-events: auto; }
+    .sidebar {
+      position: fixed; right: 0; top: 0; bottom: 0; z-index: 1600;
+      width: min(340px, 88vw);
+      background: #0f1218;
+      border-left: 1px solid var(--line);
+      transform: translateX(100%);
+      transition: .3s;
+      display: flex;
+      flex-direction: column;
+      box-shadow: -20px 0 60px rgba(0,0,0,.45);
+    }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-header {
+      height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      border-bottom: 1px solid var(--line);
+      font-weight: 900;
+    }
+    .sidebar-close {
+      width: 34px; height: 34px; border: 0; border-radius: 10px;
+      background: rgba(255,255,255,.08);
+      color: #fff; font-size: 19px; cursor: pointer;
+    }
+    .sidebar-nav { padding: 14px; }
+    .sidebar-nav a {
+      display: flex; align-items: center; gap: 12px;
+      padding: 13px 14px;
+      border-radius: 13px;
+      color: #dce2ec;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .sidebar-nav a:hover { background: rgba(255,255,255,.08); color: #fff; }
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 18px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .sidebar-footer strong { color: var(--gold); }
+
+    .hero {
+      min-height: 92svh;
+      padding: 110px 20px 48px;
+      display: flex;
+      align-items: flex-end;
+      background:
+        linear-gradient(to bottom, rgba(0,0,0,.18) 0%, rgba(0,0,0,.46) 42%, rgba(0,0,0,.86) 100%),
+        url('./hero-marcos.jpg') center center / cover no-repeat;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--line);
+    }
+    .hero-content {
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: #f5e8ba;
+      background: rgba(214,179,90,.16);
+      border: 1px solid rgba(214,179,90,.36);
+      border-radius: 999px;
+      padding: 7px 13px;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 18px;
+    }
+    .hero h1 {
+      font-size: clamp(42px, 8vw, 90px);
+      line-height: .95;
+      letter-spacing: -4px;
+      font-weight: 900;
+      margin-bottom: 18px;
+      text-shadow: 0 18px 50px rgba(0,0,0,.6);
+    }
+    .hero h1 em { color: var(--gold); font-style: normal; }
+    .hero p {
+      max-width: 640px;
+      color: rgba(255,255,255,.78);
+      font-size: 17px;
+      line-height: 1.65;
+      margin-bottom: 26px;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    .btn-hero, .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+      min-height: 48px;
+      padding: 13px 18px;
+      border-radius: 13px;
+      border: 1px solid var(--line2);
+      background: rgba(255,255,255,.08);
+      color: #fff;
+      font-weight: 900;
+      transition: .2s;
+      cursor: pointer;
+    }
+    .btn-hero:hover, .btn:hover { transform: translateY(-2px); background: rgba(255,255,255,.14); }
+    .btn-gold { background: var(--gold); color: #111; border-color: var(--gold); }
+    .btn-gold:hover { background: #e4c46a; }
+    .btn-whats { background: var(--green); border-color: var(--green); }
+    .btn-instagram { background: linear-gradient(135deg,#f09433,#dc2743,#bc1888); border: 0; }
+    .btn-email { background: rgba(255,255,255,.10); }
+    .btn-icon { width: 18px; height: 18px; fill: currentColor; flex-shrink: 0; }
+
+    .filters-panel {
+      position: relative;
+      top: auto;
+      z-index: 1;
+      background: rgba(9,11,16,.94);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+      padding: 15px 20px;
+    }
+    .filters-inner {
+      max-width: 980px;
+      margin: 0 auto;
+      display: grid;
+      gap: 12px;
+    }
+    .search-line {
+      display: grid;
+      grid-template-columns: 1.4fr .8fr .8fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+    .input-wrap { position: relative; }
+    .input-wrap input, .filter-select {
+      width: 100%;
+      height: 48px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 0 14px;
+      outline: none;
+      font-size: 14px;
+    }
+    .input-wrap input { padding-left: 42px; }
+    .input-wrap span { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+    .input-wrap input:focus, .filter-select:focus {
+      border-color: rgba(168,85,247,.7);
+      box-shadow: 0 0 0 3px rgba(168,85,247,.14);
+    }
+    .clear-btn {
+      height: 48px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface);
+      color: var(--muted);
+      padding: 0 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .clear-btn:hover { color: #fff; background: var(--surface2); }
+
+    .quick-filters { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
+    .chip {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .chip.active, .chip:hover { background: var(--gold); color: #111; border-color: var(--gold); }
+
+    .view-toggle-bar {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 18px 20px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .results-count { color: var(--muted); font-size: 13px; font-weight: 800; }
+    .view-toggle { display: flex; gap: 6px; }
+    .view-btn {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--muted);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-weight: 900;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .view-btn.active { background: var(--purple); color: #fff; border-color: var(--purple); }
+
+    .cards-section {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 16px 20px 44px;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(258px, 1fr));
+      gap: 16px;
+    }
+    .project-card {
+      background: linear-gradient(180deg, #151820 0%, #10131a 100%);
+      color: var(--text);
+      border-radius: 14px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: 0 18px 45px rgba(0,0,0,.24);
+      transition: .2s;
+      min-height: 206px;
+    }
+    .project-card:hover { transform: translateY(-4px); box-shadow: 0 24px 70px rgba(0,0,0,.34); }
+    .card-logo-area {
+      height: 110px;
+      background: linear-gradient(135deg, #0b2348, #003087);
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-logo-area::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 20%, rgba(255,255,255,.10), transparent 35%);
+      pointer-events: none;
+    }
+    .card-logo {
+      max-width: 72%;
+      max-height: 70px;
+      object-fit: contain;
+      position: relative;
+      z-index: 1;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,.25));
+    }
+    .card-placeholder {
+      width: 76px;
+      height: 76px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.13);
+      border: 1px solid rgba(255,255,255,.22);
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 22px;
+      font-weight: 900;
+      position: relative;
+      z-index: 1;
+    }
+    .status-pill {
+      position: absolute;
+      top: 9px;
+      right: 9px;
+      z-index: 2;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: #2088ff;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 900;
+      box-shadow: 0 8px 20px rgba(0,0,0,.25);
+    }
+    .card-body { padding: 13px 14px 14px; }
+    .card-title { font-size: 15px; font-weight: 900; margin-bottom: 6px; color: #f8fafc; line-height: 1.25; }
+    .card-local { color: #a9adb4; font-size: 12px; font-weight: 700; margin-bottom: 11px; }
+    .card-meta {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+    .mini-tag {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(214,179,90,.14);
+      color: #f5d77a;
+      border-radius: 8px;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 900;
+      border: 1px solid rgba(214,179,90,.24);
+    }
+
+    .list-view, .map-list-view { display: none; }
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--surface);
+    }
+    table { border-collapse: collapse; width: 100%; min-width: 760px; }
+    th {
+      color: var(--muted);
+      text-align: left;
+      font-size: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      text-transform: uppercase;
+      letter-spacing: .6px;
+    }
+    td { padding: 15px 16px; border-bottom: 1px solid var(--line); color: #dce2ec; font-size: 14px; }
+    tbody tr { cursor: pointer; }
+    tbody tr:hover { background: rgba(255,255,255,.05); }
+    .td-name { color: #fff; font-weight: 900; }
+
+    .map-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+    }
+    .map-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .map-card h3 { font-size: 15px; margin-bottom: 7px; }
+    .map-card p { color: var(--muted); font-size: 13px; line-height: 1.5; margin-bottom: 12px; }
+    .map-card a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: 12px;
+      font-weight: 900;
+      background: rgba(168,85,247,.16);
+      color: #e9d5ff;
+      border: 1px solid rgba(168,85,247,.30);
+    }
+
+    .section {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 42px 20px;
+    }
+    .section-full {
+      max-width: none;
+      background: #0e131d;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .section-full .section-inner {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+    .section-title { font-size: 24px; font-weight: 900; letter-spacing: -.6px; margin-bottom: 6px; }
+    .section-sub { color: var(--muted); font-size: 14px; line-height: 1.65; margin-bottom: 20px; }
+    .divider { width: 38px; height: 3px; border-radius: 3px; background: var(--gold); margin-bottom: 20px; }
+
+    .faq-list { display: grid; gap: 10px; }
+    .faq-item {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .faq-q {
+      padding: 15px 16px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+    }
+    .faq-a {
+      display: none;
+      color: var(--muted);
+      line-height: 1.65;
+      padding: 0 16px 16px;
+      font-size: 14px;
+    }
+    .faq-a.open { display: block; }
+
+    .contact-section {
+      background: #0e131d;
+      border-top: 1px solid var(--line);
+      padding: 46px 20px;
+    }
+    .contact-inner { max-width: 980px; margin: 0 auto; }
+    .contact-card {
+      background: linear-gradient(135deg, #141c2a, #101421);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 26px;
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 20px;
+      align-items: center;
+      box-shadow: var(--shadow);
+    }
+    .contact-name { font-size: 25px; font-weight: 900; }
+    .contact-role { color: var(--muted); margin-top: 6px; line-height: 1.6; }
+    .contact-creci { display: inline-flex; margin-top: 12px; background: var(--gold); color: #111; border-radius: 999px; padding: 6px 12px; font-size: 12px; font-weight: 900; }
+    .contact-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .contact-btn {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      background: var(--surface2);
+      transition: .2s;
+    }
+    .contact-btn:hover { transform: translateY(-3px) scale(1.04); }
+    .contact-btn svg { width: 23px; height: 23px; fill: currentColor; }
+    .whats { background: var(--green); border-color: var(--green); }
+    .insta { background: linear-gradient(135deg,#f09433,#dc2743,#bc1888); border: 0; }
+    .mail { background: #273244; }
+
+    footer {
+      padding: 38px 20px 28px;
+      background: #111827;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+    }
+    .footer-inner { max-width: 980px; margin: 0 auto; }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 26px;
+    }
+    .footer-grid h4 { color: #fff; font-size: 12px; text-transform: uppercase; letter-spacing: .8px; margin-bottom: 12px; }
+    .footer-grid a { display: block; color: var(--muted); font-size: 13px; margin-bottom: 8px; }
+    .footer-grid a:hover { color: var(--gold); }
+    .disclaimer {
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      padding: 16px;
+      font-size: 12px;
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+    .disclaimer strong { color: var(--gold); }
+    .footer-bottom { border-top: 1px solid var(--line); padding-top: 18px; font-size: 12px; }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(5px);
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      width: 100%;
+      max-width: 620px;
+      max-height: 92svh;
+      overflow: auto;
+      background: #f8fafc;
+      color: #0b2144;
+      border-radius: 24px 24px 0 0;
+      padding: 12px 18px 30px;
+      box-shadow: 0 -24px 80px rgba(0,0,0,.45);
+      position: relative;
+      animation: up .24s ease;
+    }
+    @keyframes up { from { transform: translateY(70px); opacity: .65; } to { transform: translateY(0); opacity: 1; } }
+    .handle { width: 42px; height: 4px; border-radius: 999px; background: #cbd5e1; margin: 0 auto 12px; }
+    .modal-close {
+      position: absolute;
+      right: 16px;
+      top: 16px;
+      width: 36px;
+      height: 36px;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,.88);
+      color: #64748b;
+      font-size: 20px;
+      cursor: pointer;
+      z-index: 4;
+      box-shadow: 0 8px 22px rgba(15,23,42,.16);
+    }
+    .modal-hero-img {
+      height: 190px;
+      border-radius: 18px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #003087, #0b409c);
+      display: grid;
+      place-items: center;
+      margin-bottom: 18px;
+      border: 1px solid #e2e8f0;
+    }
+    .modal-hero-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .modal-hero-fallback { color: #fff; font-size: 26px; font-weight: 900; text-align: center; padding: 20px; }
+    .modal-header { display: flex; gap: 14px; align-items: center; margin-bottom: 14px; }
+    .modal-logo {
+      width: 70px; height: 70px; border-radius: 15px;
+      background: #003087;
+      display: grid; place-items: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .modal-logo img { width: 100%; height: 100%; object-fit: contain; padding: 7px; }
+    .modal-title { font-size: 24px; font-weight: 900; line-height: 1.1; color: #003087; margin-bottom: 5px; }
+    .modal-local { color: #64748b; font-size: 13px; font-weight: 700; }
+    .badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+    .badge {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 11px;
+      font-weight: 900;
+      background: rgba(214,179,90,.14);
+      color: #f5d77a;
+    }
+    .badge.status { background: #dbeafe; color: #0b409c; }
+    .modal-box {
+      background: #eef2f8;
+      border-radius: 14px;
+      padding: 13px;
+      color: #475569;
+      line-height: 1.65;
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .tag {
+      background: rgba(214,179,90,.14);
+      color: #f5d77a;
+      border: 1px solid #c9dcff;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .modal-links {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
+    .link-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      border-radius: 12px;
+      border: 1.5px solid;
+      padding: 11px 12px;
+      font-size: 13px;
+      font-weight: 900;
+      transition: .2s;
+    }
+    .link-btn:hover { transform: translateY(-2px); }
+    .link-book { background: #fff7ed; color: #ea580c; border-color: #fed7aa; }
+    .link-master { background: #eff6ff; color: #0277bd; border-color: #bfdbfe; }
+    .link-video { background: #fff1f2; color: #be123c; border-color: #fecdd3; }
+    .link-local { background: #f5e8ff; color: #7e22ce; border-color: #e9d5ff; }
+    .disabled {
+      opacity: .48;
+      pointer-events: none;
+      filter: grayscale(.25);
+    }
+
+    @media (max-width: 760px) {
+      .search-line { grid-template-columns: 1fr; }
+      .clear-btn { width: 100%; }
+      .view-toggle-bar { flex-direction: column; align-items: flex-start; }
+      .contact-card { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 520px) {
+      .hero { min-height: 86svh; padding-bottom: 34px; }
+      .hero h1 { letter-spacing: -2px; }
+      .hero-actions .btn-hero { width: 100%; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .modal-links { grid-template-columns: 1fr; }
+      .modal-hero-img { height: 150px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="#inicio" class="brand-mini"><div class="brand-mark">M</div><span>Marcos Campos</span></a>
+    <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+  </nav>
+
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header"><span>Menu</span><button class="sidebar-close" onclick="closeSidebar()">×</button></div>
+    <div class="sidebar-nav">
+      <a href="#lancamentos" onclick="closeSidebar()">🏢 Empreendimentos</a>
+      <a href="#lista" onclick="closeSidebar()">📋 Lista Completa</a>
+      <a href="#faq" onclick="closeSidebar()">❓ Dúvidas Frequentes</a>
+      <a href="#contato" onclick="closeSidebar()">☎️ Contato</a>
+    </div>
+    <div class="sidebar-footer">Site Oficial<br><strong>Marcos Campos</strong><br>CRECI 108743</div>
+  </aside>
+
+  <section class="hero" id="inicio">
+    <div class="hero-content">
+      <div class="hero-badge">⭐ Acesso Exclusivo</div>
+      <h1>Marcos <em>Campos</em></h1>
+      <p>Todos os empreendimentos, materiais e canais em um só lugar.</p>
+      <div class="hero-actions">
+        <a class="btn-hero btn-gold" href="#lancamentos"><svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V5.5C4 4.12 5.12 3 6.5 3h7C14.88 3 16 4.12 16 5.5V9h1.5c1.38 0 2.5 1.12 2.5 2.5V21h-6v-4h-4v4H4Zm3-12h2V7H7v2Zm0 4h2v-2H7v2Zm4-4h2V7h-2v2Zm0 4h2v-2h-2v2Zm5 1h2v-2h-2v2Z"/></svg> Ver Empreendimentos</a>
+        <a class="btn-hero btn-ghost" href="#videos"><svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg> Vídeos</a>
+        <a class="btn-hero btn-whats" target="_blank" rel="noopener" href="https://wa.me/5521964311175?text=Ol%C3%A1%2C%20Marcos!%20Vim%20pelo%20site%20e%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20os%20empreendimentos."><svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.52 3.48A11.78 11.78 0 0 0 12.14 0C5.62 0 .31 5.31.31 11.83c0 2.09.55 4.13 1.59 5.93L.21 24l6.39-1.67a11.84 11.84 0 0 0 5.54 1.41h.01c6.52 0 11.83-5.31 11.83-11.83 0-3.16-1.23-6.13-3.46-8.43ZM12.15 21.75h-.01a9.84 9.84 0 0 1-5.02-1.37l-.36-.22-3.79.99 1.01-3.69-.24-.38a9.8 9.8 0 0 1-1.5-5.25c0-5.43 4.42-9.85 9.86-9.85 2.63 0 5.1 1.03 6.96 2.89a9.78 9.78 0 0 1 2.89 6.96c0 5.43-4.42 9.85-9.8 9.85Zm5.4-7.37c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.64-2.05-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.75-.72 2-1.41.25-.69.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35Z"/></svg> WhatsApp</a>
+        <a class="btn-hero btn-instagram" target="_blank" rel="noopener" href="https://www.instagram.com/marcoscampos.corretor/"><svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.75 2h8.5A5.76 5.76 0 0 1 22 7.75v8.5A5.76 5.76 0 0 1 16.25 22h-8.5A5.76 5.76 0 0 1 2 16.25v-8.5A5.76 5.76 0 0 1 7.75 2Zm0 2A3.75 3.75 0 0 0 4 7.75v8.5A3.75 3.75 0 0 0 7.75 20h8.5A3.75 3.75 0 0 0 20 16.25v-8.5A3.75 3.75 0 0 0 16.25 4h-8.5ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.25-2.2a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4Z"/></svg> Instagram</a>
+        <a class="btn-hero btn-email" href="mailto:grato.rj@curyvendas.com.br?subject=Contato%20pelo%20site%20-%20Empreendimentos"><svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.75 5h16.5A2.75 2.75 0 0 1 23 7.75v8.5A2.75 2.75 0 0 1 20.25 19H3.75A2.75 2.75 0 0 1 1 16.25v-8.5A2.75 2.75 0 0 1 3.75 5Zm0 2A.75.75 0 0 0 3 7.75v.34l9 5.38 9-5.38v-.34a.75.75 0 0 0-.75-.75H3.75ZM21 10.42l-8.49 5.07a1 1 0 0 1-1.02 0L3 10.42v5.83c0 .41.34.75.75.75h16.5c.41 0 .75-.34.75-.75v-5.83Z"/></svg> E-mail</a>
+        
+      </div>
+    </div>
+  </section>
+
+  <section class="filters-panel" id="lancamentos">
+    <div class="filters-inner">
+      <div class="search-line">
+        <div class="input-wrap">
+          <span>🔍</span>
+          <input id="searchInput" type="text" placeholder="Buscar empreendimento, bairro, imobiliária ou tag..." autocomplete="off">
+        </div>
+        <select id="bairroFilter" class="filter-select"><option value="todos">Todos os bairros</option></select>
+        <select id="imobFilter" class="filter-select"><option value="todos">Todas as imobiliárias</option></select>
+        <button id="clearFilters" class="clear-btn">Limpar</button>
+      </div>
+      <div class="quick-filters" id="quickFilters"></div>
+    </div>
+  </section>
+
+  <div class="view-toggle-bar">
+    <span class="results-count" id="resultsCount">0 empreendimentos</span>
+    <div class="view-toggle">
+      <button class="view-btn active" data-view="grid">⊞ Grid</button>
+      <button class="view-btn" data-view="list">☰ Lista</button>
+      <button class="view-btn" data-view="map">🗺 Mapa</button>
+    </div>
+  </div>
+
+  <main class="cards-section">
+    <div class="cards-grid" id="cardsGrid"></div>
+    <div class="list-view" id="listView">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Empreendimento</th><th>Bairro</th><th>Imobiliária</th><th>Status</th><th>Endereço</th></tr></thead>
+          <tbody id="listBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="map-list-view" id="mapView">
+      <div class="map-cards" id="mapCards"></div>
+    </div>
+  </main>
+
+  <section class="section" id="lista">
+    <h2 class="section-title">📋 Todos os Empreendimentos</h2>
+    <p class="section-sub">Lista completa com bairro, imobiliária e endereço. Clique em qualquer linha para abrir a ficha.</p>
+    <div class="divider"></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Empreendimento</th><th>Bairro</th><th>Imobiliária</th><th>Endereço</th></tr></thead>
+        <tbody id="fullListBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section" id="faq">
+    <h2 class="section-title">❓ Dúvidas Frequentes</h2>
+    <p class="section-sub">As perguntas mais comuns dos clientes para você ter na ponta da língua.</p>
+    <div class="divider"></div>
+    <div class="faq-list" id="faqList"></div>
+  </section>
+
+  <section class="contact-section" id="contato">
+    <div class="contact-inner">
+      <h2 class="section-title">☎️ Contato</h2>
+      <p class="section-sub">Fale diretamente com o corretor responsável para tirar dúvidas, consultar disponibilidade ou receber atendimento personalizado.</p>
+      <div class="divider"></div>
+      <div class="contact-card">
+        <div>
+          <div class="contact-name">Marcos Campos</div>
+          <div class="contact-role">Atendimento especializado em empreendimentos.</div>
+          <div class="contact-creci">CRECI 108743</div>
+        </div>
+        <div class="contact-actions">
+          <a class="contact-btn whats" target="_blank" rel="noopener" aria-label="WhatsApp" href="https://wa.me/5521964311175?text=Ol%C3%A1%2C%20Marcos!%20Vim%20pelo%20site%20e%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es."><svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.52 3.48A11.78 11.78 0 0 0 12.14 0C5.62 0 .31 5.31.31 11.83c0 2.09.55 4.13 1.59 5.93L.21 24l6.39-1.67a11.84 11.84 0 0 0 5.54 1.41h.01c6.52 0 11.83-5.31 11.83-11.83 0-3.16-1.23-6.13-3.46-8.43ZM12.15 21.75h-.01a9.84 9.84 0 0 1-5.02-1.37l-.36-.22-3.79.99 1.01-3.69-.24-.38a9.8 9.8 0 0 1-1.5-5.25c0-5.43 4.42-9.85 9.86-9.85 2.63 0 5.1 1.03 6.96 2.89a9.78 9.78 0 0 1 2.89 6.96c0 5.43-4.42 9.85-9.8 9.85Zm5.4-7.37c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.64-2.05-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.75-.72 2-1.41.25-.69.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35Z"/></svg></a>
+          <a class="contact-btn mail" aria-label="E-mail" href="mailto:grato.rj@curyvendas.com.br?subject=Contato%20pelo%20site"><svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.75 5h16.5A2.75 2.75 0 0 1 23 7.75v8.5A2.75 2.75 0 0 1 20.25 19H3.75A2.75 2.75 0 0 1 1 16.25v-8.5A2.75 2.75 0 0 1 3.75 5Zm0 2A.75.75 0 0 0 3 7.75v.34l9 5.38 9-5.38v-.34a.75.75 0 0 0-.75-.75H3.75ZM21 10.42l-8.49 5.07a1 1 0 0 1-1.02 0L3 10.42v5.83c0 .41.34.75.75.75h16.5c.41 0 .75-.34.75-.75v-5.83Z"/></svg></a>
+          <a class="contact-btn insta" target="_blank" rel="noopener" aria-label="Instagram" href="https://www.instagram.com/marcoscampos.corretor/"><svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.75 2h8.5A5.76 5.76 0 0 1 22 7.75v8.5A5.76 5.76 0 0 1 16.25 22h-8.5A5.76 5.76 0 0 1 2 16.25v-8.5A5.76 5.76 0 0 1 7.75 2Zm0 2A3.75 3.75 0 0 0 4 7.75v8.5A3.75 3.75 0 0 0 7.75 20h8.5A3.75 3.75 0 0 0 20 16.25v-8.5A3.75 3.75 0 0 0 16.25 4h-8.5ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.25-2.2a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4Z"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div>
+          <h4>📁 Materiais</h4>
+          <a href="#lancamentos">📚 Todos os Books</a>
+          <a href="#lancamentos">🗺 Todos os Masterplans</a>
+        </div>
+        <div>
+          <h4>🧭 Navegação</h4>
+          <a href="#lancamentos">Lançamentos</a>
+          <a href="#lista">Lista Completa</a>
+          <a href="#faq">Dúvidas Frequentes</a>
+          <a href="#contato">Contato</a>
+        </div>
+        <div>
+          <h4>☎️ Contato</h4>
+          <a href="https://wa.me/5521964311175?text=Ol%C3%A1%2C%20Marcos!%20Vim%20pelo%20site%20e%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20os%20empreendimentos." target="_blank" rel="noopener">💬 WhatsApp: 21 96431-1175</a>
+          <a href="mailto:grato.rj@curyvendas.com.br?subject=Contato%20pelo%20site%20-%20Empreendimentos">✉️ grato.rj@curyvendas.com.br</a>
+          <a href="https://www.instagram.com/marcoscampos.corretor/" target="_blank" rel="noopener">📸 Instagram: @marcoscampos.corretor</a>
+          <a href="#contato">CRECI 108743</a>
+        </div>
+      </div>
+      <div class="disclaimer">
+        <strong>🔒 AVISO IMPORTANTE</strong>
+        <div>As informações de preços, prazos, disponibilidade e condições comerciais estão sujeitas a alteração sem aviso prévio. Os materiais, books, masterplans e vídeos são disponibilizados apenas para consulta e apoio comercial. Para confirmar valores, disponibilidade e condições atualizadas, entre em contato diretamente com o corretor responsável.</div>
+      </div>
+      <div class="footer-bottom">Marcos Campos · CRECI 108743 · Lopsz © 2026</div>
+    </div>
+  </footer>
+
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModalBg(event)">
+    <div class="modal">
+      <div class="handle"></div>
+      <button class="modal-close" onclick="fecharModal()">×</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <script>
+    const EMPREENDIMENTOS = [
+  {
+    "id": 4,
+    "nome": "La Isla",
+    "localizacao": "Tijuca",
+    "descricao": "No coração da tijuca, onde a tradição se adapta às necessidades urbanas dos novos tempos, nasce o La Isla Residence Club. Em uma rua arborizada e residencial, cercada de conveniência de um mundo contemporâneo como mobilidade, serviços, conveniência e a exuberante floresta da tijuca, uma das maiores florestas urbanas do mundo.",
+    "endereco": "Rua Dona Delfina, 71 - Tijuca - RJ",
+    "tags": [
+      "Localização Privilegiada",
+      "4 min do Metrô",
+      "2,3 e 4 Quartos com Suíte",
+      "Coberturas e Garden com até 3 Vagas"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Cyrela",
+    "logo": "https://drive.google.com/thumbnail?id=1GOqLy_X6IDbFFAXSHRaE_PSAj1IkuCIX&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1TThnDz-GKssJ3hpbr7luOcZ-2y-b-c7P&sz=w1200",
+    "logoArquivo": "la-isla-logo.png",
+    "imagemArquivo": "laisla.webp"
+  },
+  {
+    "id": 5,
+    "nome": "Like",
+    "localizacao": "Barra da Tijuca",
+    "descricao": "O Like Residencial Club foi projetado e pensado na modernidade, tanto na sua estrutura externa como nos ambientes internos, preocupando-se em oferecer lugares espaçosos, sofisticados e conectados através de sua arquitetura diferenciada que dispõem de diversas opções de lazer e entretenimento para os moradores na área comum.",
+    "endereco": "Estrada Coronel Pedro Correia, 140, Barra da Tijuca",
+    "tags": [
+      "2 e 3 Quartos",
+      "Coberturas Duplex"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Cyrela",
+    "logo": "https://drive.google.com/thumbnail?id=1U8ZiWUIMb6SAcWbrCAtgEJZZ6OdhkDXU&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1WizYVf1lR4Lcd8RbGAjNW8ezfg2ShCnP&sz=w1200",
+    "logoArquivo": "like-logo.jpg",
+    "imagemArquivo": "like.webp"
+  },
+  {
+    "id": 6,
+    "nome": "Living Full Imagine",
+    "localizacao": "Barra Olímpica",
+    "descricao": "O Living Full Imagine chega à Barra Olímpica como um novo conceito de bem-estar e praticidade. Com studios e apartamentos de 2 quartos com suíte, o projeto foi pensado para quem valoriza conforto, modernidade e áreas de lazer completas. Com metragens que variam de 31 m² a 50 m², o empreendimento combina design funcional, acabamentos de qualidade e ambientes planejados para oferecer o máximo aproveitamento de espaço.",
+    "endereco": "Rua Aroazes, 289, Barra Olímpica",
+    "tags": [
+      "2 Quartos",
+      "Lazer Completo"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Living",
+    "logo": "https://drive.google.com/thumbnail?id=116C4G_YLrdQgyVxKNXU2Cae7hzExo4mx&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1g2CbWqMnQRFvuUGg5OdhJpFO-vriT3Ea&sz=w1200",
+    "logoArquivo": "living-imagine-logo.webp",
+    "imagemArquivo": "livingfullimagine.png"
+  },
+  {
+    "id": 7,
+    "nome": "Living Parque Jardim 1",
+    "localizacao": "Barra da Tijuca",
+    "descricao": "O Living Parque Cidade Jardim é um empreendimento composto por apartamentos tipo e garden com área total que varia de 42 m² a 86 m², plantas com 2 quartos e opção de suíte. O residencial oferece lazer completo, possibilidade de vaga no estacionamento, circuito de segurança avançado e localização privilegiada na região.",
+    "endereco": "Avenida Imperatriz Leopoldina, Barra da Tijuca",
+    "tags": [
+      "2 Quartos"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Living",
+    "logo": "https://drive.google.com/thumbnail?id=1LEJmj-mgVq3NOj_2PORZedqbgodJ9eCi&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1aezm6_12yXFtRyBVe_GzsXVkhTD_sbkB&sz=w1200",
+    "logoArquivo": "living-parque-jardim-logo.png",
+    "imagemArquivo": "livingparquejardim.jpg"
+  },
+  {
+    "id": 8,
+    "nome": "Living Parque Jardim 2",
+    "localizacao": "Barra Olímpica",
+    "descricao": "No novo endereço mais desejado, a oportunidade para você se sentir especial. Ao lado do Cidade Jardim e de tudo que a Barra tem de melhor",
+    "endereco": "R. Adílio de Oliveira Gonçalves, 160 - Barra Olímpica, Rio de Janeiro - RJ",
+    "tags": [
+      "2 Quartos",
+      "1Suíte",
+      "1 Vaga"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Living",
+    "logo": "https://drive.google.com/thumbnail?id=1LEJmj-mgVq3NOj_2PORZedqbgodJ9eCi&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1aezm6_12yXFtRyBVe_GzsXVkhTD_sbkB&sz=w1200",
+    "logoArquivo": "living-parque-jardim-logo.png",
+    "imagemArquivo": "livingparquejardim.jpg"
+  },
+  {
+    "id": 9,
+    "nome": "Living Parque Jardim 3",
+    "localizacao": "Jacarepaguá",
+    "descricao": "Sua oportunidade de morar no novo endereço mais desejado, ao lado de tudo que a Barra tem de melhor!",
+    "endereco": "Avenida Imperatriz Leopoldina, s/n - Jacarepaguá - Rio de Janeiro - RJ",
+    "tags": [
+      "2 Quartos",
+      "1Suíte",
+      "1 Vaga"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Living",
+    "logo": "https://drive.google.com/thumbnail?id=1LEJmj-mgVq3NOj_2PORZedqbgodJ9eCi&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1aezm6_12yXFtRyBVe_GzsXVkhTD_sbkB&sz=w1200",
+    "logoArquivo": "living-parque-jardim-logo.png",
+    "imagemArquivo": "livingparquejardim.jpg"
+  },
+  {
+    "id": 10,
+    "nome": "Living Sunset",
+    "localizacao": "Barra Olímpica",
+    "descricao": "Desde a sua concepção, a área foi pensada para ser um lugar que unisse qualidade de vida, praticidade e modernidade.",
+    "endereco": "Estr. Cel. Pedro Corrêa, 130 - Rio de Janeiro - Barra Olímpica - RJ",
+    "tags": [
+      "1 e 2 Quartos",
+      "1Suíte",
+      "1 Vaga"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Living",
+    "logo": "https://drive.google.com/thumbnail?id=13KyKvMfVVqEtQiTQReJEniZF-JarshbS&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=14hK8a0YlEE6Jxi5wMZjb6SeEaOOdk7B0&sz=w1200",
+    "logoArquivo": "living-sunset-logo.jfif",
+    "imagemArquivo": "livingsunset.jpg"
+  },
+  {
+    "id": 11,
+    "nome": "Living Vista Parque",
+    "localizacao": "Barra da Tijuca",
+    "descricao": "O Living Vista Parque é um novo empreendimento que oferece uma combinação perfeita de conforto e natureza na Barra da Tijuca. Este lançamento imobiliário traz uma proposta inovadora, integrando amplas áreas verdes e um design moderno, proporcionando uma experiência de vida única para seus futuros moradores. Em uma localização privilegiada e com vista para o Parque Estadual da Pedra Branca, o empreendimento é fruto da parceria entre a Living e renomados escritórios de arquitetura, garantindo qualidade e sofisticação em cada detalhe.",
+    "endereco": "Estrada dos Bandeirantes, 5940, Barra da Tijuca",
+    "tags": [
+      "2 e 3 Quartos",
+      "Suítes",
+      "Vagas de Garagem",
+      "Coberturas"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Living/Cyrela",
+    "logo": "https://drive.google.com/thumbnail?id=1hUFD3JKBXhWt4cGjdQhCNXLSpJdei-vI&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1ui4dw29rEIb8l-oGVMfV4Vtvlji4QmP1&sz=w1200",
+    "logoArquivo": "living-vista-parque-logo.webp",
+    "imagemArquivo": "livingvistaparque.webp"
+  },
+  {
+    "id": 12,
+    "nome": "Living Wellness Grajaú",
+    "localizacao": "Grajaú",
+    "descricao": "O Grajaú é um bairro residencial tradicional da Zona Norte do Rio de Janeiro, com perfil consolidado e boa infraestrutura urbana. A região apresenta comércio local ativo, serviços e fácil conexão com outros bairros da cidade, o que contribui para a atratividade do investimento residencial e para a manutenção da demanda por moradia.",
+    "endereco": "Rua José do Patrocínio, 171 - Grajaú, Rio de Janeiro",
+    "tags": [
+      "2",
+      "3 e 4 Quartos",
+      "Suítes",
+      "Gardens"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Living",
+    "logo": "https://drive.google.com/thumbnail?id=1Aj9Bn253YtIBLN7OBLpBxbOlkobUSIRP&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1Ctn9Nj7XZsy4jOhZK8sNwgPvFai-zEdn&sz=w1200",
+    "logoArquivo": "wellness-logo.jpg",
+    "imagemArquivo": "wellness.jpg"
+  },
+  {
+    "id": 13,
+    "nome": "Living Wish Norte",
+    "localizacao": "Cachambi",
+    "descricao": "Living Wish Norte Cachambi, onde seus maiores desejos se tornam realidade! Situado em uma das localizações mais desejadas da Zona Norte, o Living Wish Norte tem apartamentos de até 3 quartos, com metragens chegando a 59 m². Este lançamento imobiliário, localizado em frente ao icônico Norte Shopping, não só oferece acomodações excepcionais, mas também um estilo de vida repleto de comodidades.",
+    "endereco": "Avenida Dom Hélder Câmara, 5123, Cachambi",
+    "tags": [
+      "2 e 3 Quartos",
+      "Suítes",
+      "Vagas de Garagem"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Living",
+    "logo": "https://drive.google.com/thumbnail?id=1T5VHzdn_zsXbqVBiAEtVfq47PXIuXX4S&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1AgtgW5cWjcCLIu7HUl9_zopFfo6qzLmV&sz=w1200",
+    "logoArquivo": "living-wish-logo.webp",
+    "imagemArquivo": "livingwish.webp"
+  },
+  {
+    "id": 14,
+    "nome": "Nova Caxias UP",
+    "localizacao": "Duque de Caxias",
+    "descricao": "O Nova Caxias UP é o segundo condomínio do bairro planejado Nova Caxias, a continuação de um verdadeiro sucesso de vendas em Duque de Caxias. Um empreendimento completo, com infraestrutura moderna, lazer para toda a família e agora com um grande diferencial: elevador em todas as torres, oferecendo ainda mais conforto e acessibilidade para os moradores.",
+    "endereco": "Vila Ouro Preto, Duque de Caxias - RJ",
+    "tags": [
+      "1 e 2 Quartos"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Direcional",
+    "logo": "https://drive.google.com/thumbnail?id=1ruRB2_LplONt7nKBdCRNoryXMwnx0ONf&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=165Gv_hzDgftsTSqNqQVF6Xf8Kl3N1uRb&sz=w1200",
+    "logoArquivo": "nova-caxias-logo.webp",
+    "imagemArquivo": "novacaxias.webp"
+  },
+  {
+    "id": 15,
+    "nome": "Nova Irajá",
+    "localizacao": "Irajá",
+    "descricao": "O Vivaz Nova Irajá é perfeito para quem deseja morar em um residencial seguro, com lazer completo e que possibilite uma grande qualidade de vida. O condomínio possui infraestrutura completa e conta com imóveis de metragens e plantas diversificadas, atendendo a diversos perfis de pessoas.",
+    "endereco": "Rua Citéria, 260, Irajá. Rio de Janeiro - RJ",
+    "tags": [
+      "2 Quartos",
+      "Vagas"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Vivaz/Cyrela",
+    "logo": "https://drive.google.com/thumbnail?id=1LeQUco3wBj3nlFGIptJ8XXVpnYXT6MJD&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1xua89fCUvyFp-vo3glL9iEVTF5NBftDf&sz=w1200",
+    "logoArquivo": "nova-iraja-logo.jfif",
+    "imagemArquivo": "novairaja.jfif"
+  },
+  {
+    "id": 16,
+    "nome": "Nova Norte Ginga",
+    "localizacao": "Irajá",
+    "descricao": "O Cury Nova Norte Ginga é um novo empreendimento localizado em Irajá, oferecendo um estilo de vida completo e confortável. Com uma combinação de modernidade e praticidade, em uma localização com fácil acesso às principais vias da cidade, este lançamento traz uma proposta inovadora para a região, proporcionando uma excelente oportunidade para quem busca morar bem.",
+    "endereco": "Rua Hannibal Porto, 176, Irajá",
+    "tags": [
+      "1",
+      "2 e 3 Quartos",
+      "Suítes"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Cury",
+    "logo": "https://drive.google.com/thumbnail?id=1nMqN3PNnSTxik_l1w81_cNgEpFOSb2B5&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1hmFMYTSMq4vSCR7O3U1juXq5GW2-q7QR&sz=w1200",
+    "logoArquivo": "nova-norte-ginga-logo.webp",
+    "imagemArquivo": "novanorteginga.webp"
+  },
+  {
+    "id": 17,
+    "nome": "Nova Norte Raízes",
+    "localizacao": "Irajá",
+    "descricao": "Apartamentos à venda de 2 e 3 quartos com opção de suíte e garden. Conheça o Nova Norte - Raízes com a Cury Construtora!",
+    "endereco": "Rua Hannibal Porto, Lote 3, Irajá. Rio de Janeiro - RJ",
+    "tags": [
+      "2 e 3 Quartos",
+      "Suítes e Gardens"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Cury",
+    "logo": "https://drive.google.com/thumbnail?id=108fIBIocDM5bbfiiP9sdPoa0TWQBFmnd&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1yaEFd0fiEpEVNnyvKNiZ7SiScYi9b766&sz=w1200",
+    "logoArquivo": "nova-norte-raizes-logo.jpg",
+    "imagemArquivo": "novanorteraizes.jpeg"
+  },
+  {
+    "id": 18,
+    "nome": "Nova Norte Samba",
+    "localizacao": "Irajá",
+    "descricao": "Seja bem-vindo ao Nova Norte Irajá - Samba o empreendimento imobiliário que reúne tudo o que você precisa para viver com conforto, qualidade de vida e estilo.",
+    "endereco": "R Hannibal Porto, 450 - Irajá, Rio de Janeiro",
+    "tags": [
+      "2 Quartos",
+      "Vagas"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Cury",
+    "logo": "https://drive.google.com/thumbnail?id=1PFKcrgFWleoQtnjUwrJOOXOCFP_CTTb7&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=163-Nj35g0lma9gAwHFR3XNH5IIE3mFBd&sz=w1200",
+    "logoArquivo": "nova-norte-samba-logo.jpg",
+    "imagemArquivo": "novanortesamba.avif"
+  },
+  {
+    "id": 19,
+    "nome": "Nova Olaria (Cury)",
+    "localizacao": "Olaria",
+    "descricao": "O Nova Olaria Residencial é um empreendimento que combina tradição e modernidade. Desenvolvido pela Cury, oferece qualidade de vida com uma infraestrutura de lazer completa, incluindo piscinas, academia, salão de festas, coworking, campo society e pet place. Os apartamentos têm um design funcional, otimizando o aproveitamento dos espaços. Localizado em Olaria, o projeto proporciona acesso rápido às principais vias e serviços da cidade, conectando você aos melhores destinos sem perder o charme do bairro. Ideal para quem busca uma nova forma de morar e pertencer.",
+    "endereco": "Rua Luis Câmara, 688, Olaria. Rio de Janeiro - RJ",
+    "tags": [
+      "2 Quartos",
+      "Vagas"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Cury",
+    "logo": "https://drive.google.com/thumbnail?id=1AdAqToKhERufE0-M3ZmAY940NO1k5P_S&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1vYOSXNVXD38rK4WeJoa1fxQl5q7keu8u&sz=w1200",
+    "logoArquivo": "nova-olaria-logo.webp",
+    "imagemArquivo": "novaolaria.webp"
+  },
+  {
+    "id": 20,
+    "nome": "Only by Living",
+    "localizacao": "Cachambi",
+    "descricao": "Conheça o Only by Living, no Cachambi, um projeto imobiliário inovador que promete redefinir o cenário da Zona Norte. Situado ao lado do renomado Norte Shopping, este empreendimento é inspirado na icônica rede de resorts internacionais One&Only, conhecida por sua excelência e sofisticação em destinos paradisíacos ao redor do mundo, como Dubai, Grécia, Maldivas e México.",
+    "endereco": "Av. Dom Helder Câmara, 5000, Cachambi",
+    "tags": [
+      "2 e 4 Quartos",
+      "Vagas"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Living",
+    "logo": "https://drive.google.com/thumbnail?id=19JwKtArKylcp1ljixXCGLanUYvXVgDDz&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1HRAwHpEP_KzffPBFd2rH5BjjmPld8yQc&sz=w1200",
+    "logoArquivo": "only-logo.webp",
+    "imagemArquivo": "only.webp"
+  },
+  {
+    "id": 21,
+    "nome": "Orla Mauá",
+    "localizacao": "Porto Maravilha",
+    "descricao": "Já pensou em morar em uma área do Rio de Janeiro repleta de cultura, lazer e mobilidade? Se você está pensando na Zona Portuária, está no local certo. Próxima ao Centro e composta pelos bairros Gamboa, Saúde, Santo Cristo e Caju, o local fornece experiências únicas para seus visitantes e também futuros moradores.",
+    "endereco": "Av. Venezuela, 194, Boulevard Olímpico",
+    "tags": [
+      "1,2 e 3 Quartos",
+      "Studios"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Cury",
+    "logo": "https://drive.google.com/thumbnail?id=1euh_ATvJvhEtlTmKeiq0stTDTfYCcvGC&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1kLnIeybVHT1aCUe0PfghNTL1d0CHCPGd&sz=w1200",
+    "logoArquivo": "orla-maua-logo.webp",
+    "imagemArquivo": "orlamaua.webp"
+  },
+  {
+    "id": 22,
+    "nome": "Pixinguinha (Cury)",
+    "localizacao": "Centro",
+    "descricao": "As unidades garden do Residencial Pixinguinha trazem a exclusividade de amplos espaços externos privativos, ideais para quem valoriza contato com o ar livre sem abrir mão da praticidade de um apartamento. Com metragens proporcionais às plantas internas, essas unidades combinam conforto e um estilo de vida contemporâneo, perfeito para quem deseja mais liberdade.",
+    "endereco": "Rua Geógrafo Milton Santos, 101, Centro",
+    "tags": [
+      "1,2 e 3 Quartos",
+      "Studios",
+      "Gardens"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Cury",
+    "logo": "https://drive.google.com/thumbnail?id=16imB787_KC9e7NozeUYi0yXIzOxQEaS_&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1vh1EVwDYIO0n692585ZJyAUn3eOraKgk&sz=w1200",
+    "logoArquivo": "píxinguinha-logo.webp",
+    "imagemArquivo": "pixinguinha.webp"
+  },
+  {
+    "id": 23,
+    "nome": "Porto Maravilha (Cury)",
+    "localizacao": "São Cristóvão",
+    "descricao": "Situado na região portuária do Rio, o Residencial Porto Maravilha é um novo lançamento imobiliário que oferece apartamentos de 2 quartos, com varandas e opções de suíte. Localizado no bairro de São Cristõvão, na zona central, este empreendimento é uma excelente oportunidade para quem deseja viver em uma área em constante desenvolvimento e valorização, com fácil acesso a todas as regiões da cidade.",
+    "endereco": "Rua Melo e Souza, 101, São Cristóvão",
+    "tags": [
+      "2 Quartos",
+      "Studios"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Cury",
+    "logo": "https://drive.google.com/thumbnail?id=1NiNGj_KjOkdp-CKREzLLJDAU3RE49YGG&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1OKk5NT8_Q152E4BNHfLm81sNoPbLA0DY&sz=w1200",
+    "logoArquivo": "porto-maravilha-logo.webp",
+    "imagemArquivo": "portomaravilha.webp"
+  },
+  {
+    "id": 24,
+    "nome": "Vidamérica",
+    "localizacao": "Del Castilho",
+    "descricao": "O Vidamerica Clube Residencial é um empreendimento diferenciado e exclusivo em Del Castilho, voltado para as famílias que desejam usufruir de muita comodidade no local mais valorizado da Zona Norte carioca. Os moradores podem desfrutar de imóveis com ambientes amplos, boa ventilação e iluminação natural, entregues com diferenciais de alto padrão nos acabamentos que dão muito estilo ao lar.",
+    "endereco": "Avenida Dom Hélder Câmara, 3443, Del Castilho",
+    "tags": [
+      "2 Quartos",
+      "1 Suíte",
+      "1 Vaga"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Living",
+    "logo": "https://drive.google.com/thumbnail?id=1VTyTeTqEacLt-iBPBVUrm_oSIdkG8s_N&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1pMIID5Y0VU9Zy3tvBCq5JPOD-hkpUtmJ&sz=w1200",
+    "logoArquivo": "vidamerica-logo.webp",
+    "imagemArquivo": "vidamerica.webp"
+  },
+  {
+    "id": 25,
+    "nome": "Ville Roma",
+    "localizacao": "Taquara",
+    "descricao": "Conheça o Ville Roma. More em localização privilegiada na Taquara, lazer completo, estrutura inovadora e com todas as facilidades do Casa Verde e Amarela.",
+    "endereco": "Estrada do Mapuá, 691 , Taquara - Rio de Janeiro",
+    "tags": [
+      "2 Quartos",
+      "1 Vaga"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Vivaz",
+    "logo": "https://drive.google.com/thumbnail?id=1VwbQaMVlIKGcVLjt4Rv0exDYkNHqL4Xp&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1ILrLYJ6JWZED0DH0fkeHLemaBl0rH0U7&sz=w1200",
+    "logoArquivo": "ville-roma-logo.png",
+    "imagemArquivo": "villeroma.jpg"
+  },
+  {
+    "id": 26,
+    "nome": "Vivaz Bandeirantes",
+    "localizacao": "Jacarepaguá",
+    "descricao": "O Lançamento Vivaz Prime é um empreendimento situado em uma região agradável e tranquila em Jacarepaguá, na Estrada dos Bandeirantes. O projeto ficou a cargo da Vivaz, empresa que integra o grupo Cyrela, uma das mais renomadas construtoras do território nacional. Os edifícios apresentam riqueza de detalhes em sua apresentação visual impecável, em tons de branco e preto que se conectam para entregar um design contemporâneo, charmoso e elegante.",
+    "endereco": "Estrada dos Bandeirantes, 7277, Jacarepaguá",
+    "tags": [
+      "1 e 2 Quartos",
+      "Vagas",
+      "Lazer Completo"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Vivaz",
+    "logo": "https://drive.google.com/thumbnail?id=1n9DE1Ea4MUJPZihdr8_RxieOClfHxXap&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1XGbUqt2-STh3_o8aKbciY763bZq_MaTY&sz=w1200",
+    "logoArquivo": "vivaz-bandeirantes-logo.webp",
+    "imagemArquivo": "vivazbandeirantes.webp"
+  },
+  {
+    "id": 27,
+    "nome": "Vivaz Connection",
+    "localizacao": "Riachuelo",
+    "descricao": "Assinado pela construtora Vivaz, o Vivaz Connection foi cuidadosamente planejado para atender ao estilo de vida contemporâneo. O projeto reúne ambientes de lazer variados, segurança tecnológica e unidades funcionais, tudo dentro de um condomínio moderno. Sua arquitetura valoriza a integração dos espaços e a praticidade no dia a dia, enquanto a localização no Riachuelo conecta os moradores a pontos estratégicos da cidade.",
+    "endereco": "Rua Magalhães de Castro, 172, Riachuelo",
+    "tags": [
+      "1 e 2 Quartos",
+      "Vagas",
+      "Varanda"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Vivaz",
+    "logo": "https://drive.google.com/thumbnail?id=1hsHKXfiMPrmL6RxC24xMPpmqNWkkIvfy&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1mjkYOiLjIpki5XkmNUoUXUnjkacSWr6c&sz=w1200",
+    "logoArquivo": "vivaz-connection-ogo.png",
+    "imagemArquivo": "vivazconnection.webp"
+  },
+  {
+    "id": 28,
+    "nome": "Vivaz Geremário",
+    "localizacao": "Jacarepaguá",
+    "descricao": "O Vivaz Geremário Prime é um lançamento da construtora Vivaz em Jacarepaguá, na Zona Oeste do Rio de Janeiro. O projeto foi desenvolvido para atender quem busca praticidade e conforto, unindo boa localização e áreas comuns bem planejadas. O condomínio está na Avenida Geremário Dantas, uma das regiões mais acessíveis e com ampla infraestrutura de comércio, serviços e transporte.",
+    "endereco": "Avenida Geremário Dantas, 278, Tanque, Jacarepaguá",
+    "tags": [
+      "1 e 2 Quartos"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Vivaz",
+    "logo": "",
+    "imagem": "",
+    "logoArquivo": "",
+    "imagemArquivo": ""
+  },
+  {
+    "id": 29,
+    "nome": "Vivaz Honório",
+    "localizacao": "Engenho de Dentro",
+    "descricao": "O Vivaz Honório é a novidade que surge para modernizar o Engenho de Dentro e ser uma boa opção de moradia na Zona Norte do Rio de Janeiro, ideal para aqueles que buscam realizar o sonho da casa própria com condições facilitadas. O condomínio é completo e oferece plena segurança, lazer e serviços exclusivos, além de imóveis compactos e confortáveis, ideais para quem busca um imóvel funcional e acolhedor.",
+    "endereco": "Rua Honório, 419, Engenho de Dentro",
+    "tags": [
+      "1 e 2 Quartos",
+      "Vagas"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Vivaz",
+    "logo": "https://drive.google.com/thumbnail?id=1p54XQAClr5oPRfaAhapjX1OR_FVRfyww&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=112iqp4vQZFjVc4ciUUD716glslyGT9pT&sz=w1200",
+    "logoArquivo": "vivaz-honorio-logo.webp",
+    "imagemArquivo": "vivazhonorio.webp"
+  },
+  {
+    "id": 30,
+    "nome": "Vivaz Marechal Rondon",
+    "localizacao": "Riachuelo",
+    "descricao": "O Vivaz Marechal Rondon é o atual empreendimento da construtora Vivaz no bairro Riachuelo e está situado em uma das principais vias da região. Os moradores poderão contar com excelente mobilidade urbana e fácil acesso ao centro da cidade, à UERJ e ao Maracanã. O bairro também concentra inúmeros serviços facilitadores, estabelecimentos comerciais variados, metrô, parques e muito mais.",
+    "endereco": "Av. Marechal Rondon, 1439, Riachuelo",
+    "tags": [
+      "1 e 2 Quartos",
+      "Vagas"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Vivaz",
+    "logo": "https://drive.google.com/thumbnail?id=15jOk5M11wV40WWFjH6BkroTT5Nc9QeQA&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1aq8UEgtFkwxjhDxW-qh03ACvQwxrjZk2&sz=w1200",
+    "logoArquivo": "vivaz-marechal-logo.webp",
+    "imagemArquivo": "vivazmarechal.webp"
+  },
+  {
+    "id": 31,
+    "nome": "Vivaz Metropolitano",
+    "localizacao": "Barra da Tijuca",
+    "descricao": "Próximo à Barra da Tijuca, o Vivaz Metropolitano é um lançamento imobiliário que oferece apartamentos de 2 quartos. Situado a 5 minutos do Shopping Metropolitano e a 10 minutos da Praia da Barra, o empreendimento é cercado por áreas verdes e conta com infraestrutura completa, incluindo lazer com piscina e segurança com guarita, sendo ideal para quem busca conforto, modernidade e uma localização estratégica.",
+    "endereco": "Avenida Comandante Guaranys, Barra da Tijuca, Rio de Janeiro",
+    "tags": [
+      "2 Quartos",
+      "Vagas"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Vivaz",
+    "logo": "https://drive.google.com/thumbnail?id=19rZ9ZN_pUCbsPzpqP_e1WoPYD-xLgcYS&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1t-ApPrq3KVKmvk6-ltFvBwmLYrC-YoL4&sz=w1200",
+    "logoArquivo": "vivaz-metropolitano-logo.png",
+    "imagemArquivo": "vivazmetropolitano.webp"
+  },
+  {
+    "id": 32,
+    "nome": "Vivaz Olaria",
+    "localizacao": "Olaria",
+    "descricao": "O Vivaz Residencial Olaria é um futuro lançamento na Rua Comandante Vergueiro da Cruz, na Zona Norte do Rio de Janeiro. O projeto será financiado pelo Programa Minha Casa, Minha Vida, com condições facilitadas pela Caixa Econômica Federal, permitindo até 80% de financiamento, podendo chegar a até 90% em outros programas sociais. Com foco na convivência e bem-estar, todas as unidades terão 2 quartos e plantas que priorizam integração dos ambientes sociais, varanda funcional e conforto nas áreas íntimas.",
+    "endereco": "R. Comte. Vergueiro da Cruz, 76 - Olaria, Rio de Janeiro - RJ",
+    "tags": [
+      "2 Quartos",
+      "1 Vaga",
+      "Varanda"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Vivaz",
+    "logo": "https://drive.google.com/thumbnail?id=1e6dwQUmYviYsVKvRzdz3cz5e_N3KjhOa&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1K2nd5x-1LR5BWrMYSgx7ll8UptHXtTbX&sz=w1200",
+    "logoArquivo": "vivaz-olaria-logo.jpg",
+    "imagemArquivo": "vivazolaria.webp"
+  },
+  {
+    "id": 33,
+    "nome": "Vivaz Prime ZN",
+    "localizacao": "Engenho de Dentro",
+    "descricao": "Se você está em busca do apartamento dos seus sonhos na zona norte do Rio de Janeiro, a Vivaz tem a solução perfeita para você! Com uma localização estratégica e facilidades de financiamento, nossos empreendimentos proporcionam conforto, praticidade e qualidade de vida para você e sua família.",
+    "endereco": "R. das Oficinas Jorn. Luiz Mendes, 188 - Engenho de Dentro, Rio de Janeiro - RJ",
+    "tags": [
+      "1 a 2 Quartos",
+      "1 Vaga"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Vivaz",
+    "logo": "",
+    "imagem": "",
+    "logoArquivo": "",
+    "imagemArquivo": ""
+  },
+  {
+    "id": 34,
+    "nome": "Vivaz Zona Norte",
+    "localizacao": "São Francisco Xavier",
+    "descricao": "O Vivaz Zona Norte fica em uma das regiões mais completas de São Francisco Xavier, e atende a quem busca por um lar confortável em uma região mais tranquila do Rio. Os imóveis são ideais para quem busca por um apartamento mais compacto, sem abrir mão do conforto da infraestrutura que só um condomínio completo tem a oferecer.",
+    "endereco": "Rua Licínio Cardoso, 515, São Francisco Xavier",
+    "tags": [
+      "Vagas",
+      "Lazer Completo"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Vivaz",
+    "logo": "https://drive.google.com/thumbnail?id=1FuAmWdw3ISyUbG2_FWOl1DQJxFNZQjE7&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1-jSIJWLX58jmE40UM5uyASvLSVDDcVtA&sz=w1200",
+    "logoArquivo": "vivaz-zona-norte-logo.webp",
+    "imagemArquivo": "vivazzonanorte.webp"
+  },
+  {
+    "id": 35,
+    "nome": "We Barra by Living",
+    "localizacao": "Barra da Tijuca",
+    "descricao": "O We Barra By Living é a nova aposta da construtora Living para quem busca sofisticação e conveniência na Avenida das Américas, 12800, na Barra da Tijuca. Desenvolvido por um escritório de arquitetura de renome, o projeto destaca-se pela sua grandiosidade e integração com o entorno, oferecendo uma infraestrutura robusta em um dos endereços mais emblemáticos da cidade do Rio de Janeiro.",
+    "endereco": "Avenida das Américas, 12800 - Barra da Tijuca",
+    "tags": [
+      "2",
+      "3 e 4 Quartos",
+      "Suítes",
+      "Coberturas Lineares e Duplex",
+      "Gardens"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Living",
+    "logo": "https://drive.google.com/thumbnail?id=1U7OEumBfbdIfyMnUyR0991mwvZFigSkA&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1sz4R-59RE_EfkukRz3dqLVVwW8f_Y6tY&sz=w1200",
+    "logoArquivo": "we-barra-da-tijuca-logo.jpg",
+    "imagemArquivo": "webarradatijucaliving.jpg"
+  },
+  {
+    "id": 36,
+    "nome": "Casas Ibitá",
+    "localizacao": "São Conrado",
+    "descricao": "O Ibita São Conrado é um condomínio residencial da Performance, com projeto assinado pela Cité Arquitetura e paisagismo da Sá e Almeida. O empreendimento reúne amplas metragens e arquitetura refinada, em uma localização estratégica na Estrada da Gávea, próxima ao Fashion Mall e ao Gávea Golf & Country Club.",
+    "endereco": "Estrada da Gávea, 722, São Conrado",
+    "tags": [
+      "2",
+      "3 e 4 Quartos",
+      "Coberturas",
+      "Gardens"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Performance",
+    "logo": "https://drive.google.com/thumbnail?id=1_mpxlf3huH-aSM2Ca5fWY6jWS8uXHS1W&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1oZuR1ukcSORHC78JLbEUew0CNFiqGNak&sz=w1200",
+    "logoArquivo": "ibita-logo.webp",
+    "imagemArquivo": "ibita.webp"
+  },
+  {
+    "id": 37,
+    "nome": "Enseada Botafogo",
+    "localizacao": "Botafogo",
+    "descricao": "O lançamento da Performance na Praia de Botafogo é um residencial que agrada aqueles que buscam seu novo lar em um condomínio de luxo. Os imóveis são amplos e sofisticados, refletindo o bom gosto do empreendimento, e contam com vistas para o mar, Cristo e para o Pão de Açúcar.",
+    "endereco": "Rua Praia de Botafogo, 260, Botafogo",
+    "tags": [
+      "2",
+      "3 e 4 Quartos",
+      "2 Vagas",
+      "Coberturas Duplex"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Performance",
+    "logo": "https://drive.google.com/thumbnail?id=12cNJKChO4iYalbmbYV-gvP9K0yWctgnK&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1mWLalMp5yMCSE1WJ9hVdsnvT6dckCplT&sz=w1200",
+    "logoArquivo": "enseada-logo.webp",
+    "imagemArquivo": "enseada.webp"
+  },
+  {
+    "id": 38,
+    "nome": "Gaví",
+    "localizacao": "Gávea",
+    "descricao": "Assinado pela Performance Empreendimentos Imobiliários, o Gaví Gávea + Vida é um lançamento que reflete o conceito de viver com qualidade e estilo. O projeto de fachada e arquitetura leva a assinatura do escritório a+ arquitetura, enquanto o paisagismo é desenvolvido por Sá e Almeida e o interior por Manga Rosa Arquitetura — três nomes de destaque no cenário nacional.",
+    "endereco": "Rua Marquês de São Vicente, 208, Gávea",
+    "tags": [
+      "3 Quartos",
+      "Studios",
+      "UpGardens"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Performance",
+    "logo": "https://drive.google.com/thumbnail?id=1xFGFs8C6wjcw4XzJULbBo4YmwXmGTs2X&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1uf1DPvbAG_wy2ZkvfR149Bl3CxpV95-6&sz=w1200",
+    "logoArquivo": "gavi-logo.png",
+    "imagemArquivo": "gavi.jpg"
+  },
+  {
+    "id": 40,
+    "nome": "LIS - Copacabana",
+    "localizacao": "Copacabana",
+    "descricao": "Com um design arquitetônico de destaque e infraestrutura completa, o LIS Copacabana reúne apartamentos que atendem a diferentes necessidades, aliados a um condomínio com ampla área de lazer e soluções sustentáveis. É a escolha perfeita para quem busca viver em harmonia com o ambiente urbano e a natureza.",
+    "endereco": "Rua Santa Clara, 127, Copacabana",
+    "tags": [
+      "2 Quartos",
+      "Studios",
+      "Doouble Suítes",
+      "Coberturas Lineares e Duplex"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Living",
+    "logo": "https://drive.google.com/thumbnail?id=1grYWV5HmPkEeqZtBE9icTXSLKwKdq92n&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1YPmLIfrHFG3u61GxCStr3ehJVajI2y6i&sz=w1200",
+    "logoArquivo": "lis-logo.webp",
+    "imagemArquivo": "lis.webp"
+  },
+  {
+    "id": 41,
+    "nome": "Nook Copacabana",
+    "localizacao": "Copacabana",
+    "descricao": "O Nook Copacabana, lançamento residencial na Rua Hilário de Gouveia, é a mais recente novidade da construtora Performance no nobre bairro Copacabana. O projeto terá detalhes encantadores que expressam elegância e singularidade em sua fachada elaborada em design contemporâneo e em sua infraestrutura completa. Os imóveis foram projetados especialmente para pessoas que desejam viver em uma região valorizada, com conforto e comodidades.",
+    "endereco": "Rua Hilario de Gouveia, 49, Copacabana",
+    "tags": [
+      "Quartos",
+      "Suítes",
+      "Coberturas",
+      "Gardens",
+      "Studios"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Performance",
+    "logo": "https://drive.google.com/thumbnail?id=1ANbRgD49hNwKZ4HtwInOmNZYLCPj6MXb&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1xfrbjPfd3YYqem3FhLZXnfY7AjTokB2p&sz=w1200",
+    "logoArquivo": "nook-logo.webp",
+    "imagemArquivo": "nook.webp"
+  },
+  {
+    "id": 42,
+    "nome": "Vila Bela",
+    "localizacao": "Vila Isabel",
+    "descricao": "O Vila Bela Residencias é um condominio diferenciado na Vila Isabel, projetado com muito bom gosto por alguns dos profissionais mais importantes do mercado imobiliário. O residencial possui projeto visual elegante e contemporâneo, e é composto por imóveis de cômodos amplos que atraem aqueles que desejam sossego e estilo dentro do lar.",
+    "endereco": "Rua Mendes Tavares, 20, Vila Isabel",
+    "tags": [
+      "2 e 3 Quartos",
+      "1 Vaga"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Performance",
+    "logo": "https://drive.google.com/thumbnail?id=1Ns0yvuyj6qrQ46FaNhKAB5OzmMRhwk2v&sz=w1200",
+    "imagem": "",
+    "logoArquivo": "vila-bela-logo.webp",
+    "imagemArquivo": ""
+  },
+  {
+    "id": 43,
+    "nome": "786 Prudente",
+    "localizacao": "Ipanema",
+    "descricao": "O 786 Prudente emerge com um projeto deslumbrante, destinado a se situar na tranquila e charmosa região de Ipanema, sendo a oportunidade perfeita de ter conexões incríveis e de viver sentindo a brisa do mar. O empreendimento é da Opportunity e será composto por imóveis exclusivos e sofisticados, feitos cuidadosamente para se harmonizar com o lifestyle carioca.",
+    "endereco": "Rua Prudente de morais, 786, Ipanema",
+    "tags": [
+      "3 Quartos",
+      "3 Suítes",
+      "3 Vagas"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Opportunity",
+    "logo": "https://drive.google.com/thumbnail?id=1_S9eAoF65neudHkWuI7YLiou2xT461cV&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1C2_GHu3_3oDo3zj9_MXobb7cXHaYfNtR&sz=w1200",
+    "logoArquivo": "prudente-logo.webp",
+    "imagemArquivo": "prudente.webp"
+  },
+  {
+    "id": 44,
+    "nome": "All Jardim Oceânico",
+    "localizacao": "Barra da Tijuca, Jardim Oceânico",
+    "descricao": "O Residencial All Jardim Oceânico Barra da Tijuca é um condomínio de luxo que apresenta uma infraestrutura de altíssima qualidade, totalmente projetada para atender às necessidades de bem-estar dos moradores. O residencial conta com lazer completo, segurança, tecnologia e serviços, e seus imóveis apresentam layout moderno e acolhedor.",
+    "endereco": "Avenida Nuta James, 877, Barra da Tijuca",
+    "tags": [
+      "2 e 3 Quartos",
+      "Coberturas Duplex",
+      "Suítes"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Opportunity",
+    "logo": "https://drive.google.com/thumbnail?id=1q0xnQVC8kXgjqQPM6MNlMq6j1ra_VmYA&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1NeYqCw-G7tiFlIfcG3gxzYfHVp9giHTx&sz=w1200",
+    "logoArquivo": "all-jardim-oceanico-logo.webp",
+    "imagemArquivo": "alljardimoceanico.webp"
+  },
+  {
+    "id": 45,
+    "nome": "Alma",
+    "localizacao": "Ipanema",
+    "descricao": "O residencial Alma Ipanema é um lançamento que promete trazer todo o conceito de viver bem, típico do bairro onde está inserido, para proporcionar muito bem-estar aos seus moradores. Seu projeto de arquitetura e design, assinado por profissionais de renome da atualidade, é elegante, contemporâneo e harmoniza-se com perfeição na paisagem urbana do entorno.",
+    "endereco": "R. Visc. de Pirajá, 253, Ipanema",
+    "tags": [
+      "2 Quartos",
+      "Coberturas Duplex",
+      "Vagas",
+      "UpGarderns"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Opportunity",
+    "logo": "https://drive.google.com/thumbnail?id=114im60TvtUv6LiwI3XiHXKN52glTB9J5&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1l_NweFG1LmSAOke9zzcSQjpyygtGUdpf&sz=w1200",
+    "logoArquivo": "alma-logo.webp",
+    "imagemArquivo": "alma.webp"
+  },
+  {
+    "id": 46,
+    "nome": "Aretê Búzios",
+    "localizacao": "Armação dos Búzios",
+    "descricao": "Em meio a fábrica de sonhos que é a cidade de Búzios, Aretê Búzios, emerge o bairro planejado Aretê, capaz de concretizar pensamentos e de braços abertos para acolher os mais diversos tipos de famílias, traduzindo o melhor do estilo de vida buziano e com amplas ofertas de comércios, serviços, esportes e lazer reunidos no maior projeto imobiliário do Estado do Rio de Janeiro.",
+    "endereco": "Av. José Bento Ribeiro Dantas, 9000 - Lot. Praia Baia Formosa, Armação dos Búzios - RJ",
+    "tags": [
+      "3 Suítes",
+      "Garagem",
+      "Casa Linear"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Opportunity",
+    "logo": "https://drive.google.com/thumbnail?id=16CHHvKpFBobDrQi9BwRSFq3ZLQ6aK-az&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1lBvNSCFbC0TvdmDCXkysfU7NGyrIMmDX&sz=w1200",
+    "logoArquivo": "arete-buzios-logo.webp",
+    "imagemArquivo": "aretebuzios.webp"
+  },
+  {
+    "id": 47,
+    "nome": "BLar - Laranjeiras",
+    "localizacao": "Laranjeiras",
+    "descricao": "O B.Lar é a novidade na região mais bem localizada de Laranjeiras que promete trazer muito mais modernidade e beleza ao bairro, apresentando uma arquitetura contemporânea que agrada aos padrões mais exigentes. Os imóveis são confortáveis e funcionais, atendendo aos mais diversos perfis familiares com suas metragens diversificadas e plantas inteligentes, e o edifício oferece a proteção e o bem-estar necessários para uma maior qualidade de vida.",
+    "endereco": "Rua Presidente Carlos de Campos, 340, Laranjeiras",
+    "tags": [
+      "2 Quartos",
+      "Studios",
+      "Lazer Completo"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Brix",
+    "logo": "https://drive.google.com/thumbnail?id=1l8q8c0OOHQ5fKRaL7IjH0E51edJnyNTh&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1bmlKkud8svJVXXBezr0GAnUoic-K3bLX&sz=w1200",
+    "logoArquivo": "b-lar-logo.webp",
+    "imagemArquivo": "blar.webp"
+  },
+  {
+    "id": 48,
+    "nome": "Be in Rio - Arpoador",
+    "localizacao": "Arpoador",
+    "descricao": "A Rua Bulhões de Carvalho recebe o incrível lançamento Be in Rio Arpoador, próximo a Copacabana, Ipanema, que traz uma experiência única para quem deseja morar em Ipanema. Composto por amplos e modernos imóveis, perfeitos para aqueles que buscam por um lar espaçoso, o residencial possui arquitetura que se destaca na região. Sua completa infraestrutura traz mais conforto, contemplando lazer e segurança para todos.",
+    "endereco": "Rua Bulhões de Carvalho, 396, Arpoador",
+    "tags": [
+      "Até 3 Quartos",
+      "Varanda",
+      "Coberturas Duplex",
+      "Lazer no Rooftop"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Opportunity",
+    "logo": "https://drive.google.com/thumbnail?id=1m_t2m06tzpiLaOoHSgJS2cjQGm_2W9m2&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1-gc-MfpFwthlHM8a5apy-jH0EDD7qOH8&sz=w1200",
+    "logoArquivo": "be-in-rio-arpoador-logo.webp",
+    "imagemArquivo": "beinrioarpoador.webp"
+  },
+  {
+    "id": 49,
+    "nome": "Be in Rio - Barão da Torre",
+    "localizacao": "Ipanema",
+    "descricao": "Desenvolvido pela construtora Opportunity, o Be in Rio Barão da Torre está estrategicamente posicionado no número 662 da Rua Barão da Torre, em Ipanema. As unidades disponíveis incluem studios e apartamentos com double suítes, destacando-se por um design sofisticado e eficiente. O projeto oferece um estilo de vida contemporâneo, com fácil acesso às praias, aos principais comércios e às atrações culturais. Cada detalhe foi pensado para aliar conforto e modernidade em uma das áreas mais charmosas da cidade.",
+    "endereco": "Rua Barão da Torre, 662, Ipanema",
+    "tags": [
+      "Studios",
+      "Double Suítes",
+      "UpGarden"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Opportunity",
+    "logo": "https://drive.google.com/thumbnail?id=1xbwhEUZKRiJzWCTbZzPoPYcP-xMSOq_j&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1rFyLx3KHygeG5jhicLZIgHGCIyq2FcDi&sz=w1200",
+    "logoArquivo": "be-in-rio-barao-da-torre-logo.webp",
+    "imagemArquivo": "beinriobaraodatorre.webp"
+  },
+  {
+    "id": 50,
+    "nome": "Be in Rio - Leopoldo",
+    "localizacao": "Copacabana",
+    "descricao": "O B. Rio, mais recente lançamento residencial na Rua Leopoldo Miguez, em Copacabana, é um projeto moderno e sustentável que proporciona o máximo em conforto e praticidade. Composto por unidades que atendem tanto investidores quanto pessoas que planejam morar confortavelmente, o residencial fica em região valorizada e que tende a se valorizar ainda mais, devido à qualidade da sua infraestrutura.",
+    "endereco": "Rua Leopoldo Miguez, 10, Copacabana",
+    "tags": [
+      "1 e 2 Quartos",
+      "2 Suítes",
+      "1 Vaga"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Opportunity",
+    "logo": "https://drive.google.com/thumbnail?id=16QDjyEBVkS7TwHmISbX8yp_DeC7bFgrP&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1v7HdqL4S-VG2L4anyuNe_RGxfDnV8Dkj&sz=w1200",
+    "logoArquivo": "be-rio-copacabana-logo.webp",
+    "imagemArquivo": "beriocopacabana.webp"
+  },
+  {
+    "id": 51,
+    "nome": "Be in Rio - Nascimento Silva",
+    "localizacao": "Ipanema",
+    "descricao": "O Be.in Rio Nascimento Silva é um projeto desenvolvido pelo Opportunity Fundo de Investimento Imobiliário, unindo arquitetura contemporânea e design de interiores sofisticado. Localizado em Ipanema, conta com assinatura da +A Arquitetura e projeto de interiores pela Rio Arquitetura, garantindo harmonia estética e funcionalidade.",
+    "endereco": "Rua Nascimento Silva, 387, Ipanema",
+    "tags": [
+      "Apartamentos",
+      "UpGardens",
+      "Double Suítes",
+      "Coberturas Lineares"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Opportunity",
+    "logo": "https://drive.google.com/thumbnail?id=1JdURxsI88iGLugvjxgSyjpp0ck_KFwBs&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1hwP1zv4pPWE9d7I-yJ9N8He6CxCLF3Kg&sz=w1200",
+    "logoArquivo": "be-in-rio-nascimento-logo.webp",
+    "imagemArquivo": "beinrionascimento.webp"
+  },
+  {
+    "id": 52,
+    "nome": "Be in Rio - Paul Redfern",
+    "localizacao": "Ipanema",
+    "descricao": "O Be.in.Rio Paul Redfern, desenvolvido pela Opportunity, está localizado na Rua Paul Redfern, 40, em Ipanema, um dos endereços mais desejados da cidade. O projeto leva a assinatura do escritório A+ Arquitetura, com interiores e áreas comuns projetadas pela Rio Arquitetura, que trazem sofisticação e design contemporâneo inspirados na leveza do Rio.",
+    "endereco": "Rua Paul Redfern, 40, Ipanema",
+    "tags": [
+      "Studios",
+      "Double Suítes",
+      "Gardens",
+      "Coberturas Duplex"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Opportunity",
+    "logo": "https://drive.google.com/thumbnail?id=1tuCBAJeOHrOlqS8Xx1lxEk-vYugsIxd3&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1b2QvunhcmQScjWqlLUPKrieh63LzWTPC&sz=w1200",
+    "logoArquivo": "be-in-rio-paul-redfern-logo.png",
+    "imagemArquivo": "beinriopaulredfern.jpg"
+  },
+  {
+    "id": 53,
+    "nome": "Be in Rio - Pompeu Loureiro",
+    "localizacao": "Copacabana",
+    "descricao": "O Be in Rio Pompeu Loureiro é um projeto desenvolvido pela Opportunity, localizado na Rua Pompeu Loureiro, 110 e 112, em Copacabana, Rio de Janeiro. O empreendimento apresenta arquitetura contemporânea assinada por escritório de arquitetura de renome, com implantação inteligente e foco em eficiência residencial.",
+    "endereco": "Rua Pompeu Loureiro, 110 e 112, Copacabana, Rio de Janeiro",
+    "tags": [
+      "Studios",
+      "Double Suítes",
+      "Gardens",
+      "Up Gardens",
+      "Coberturas Linear"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Opportunity",
+    "logo": "https://drive.google.com/thumbnail?id=1IVVoKcqAEmJSWti2fpFu_YoKHeEIvs11&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1PNc3HEXYSWgZ7rFD8P_MEkED6W9TxlJh&sz=w1200",
+    "logoArquivo": "be-in-rio-Pompeu-Loureiro-logo.png",
+    "imagemArquivo": "beinrioPompeuLoureiro.jpg"
+  },
+  {
+    "id": 54,
+    "nome": "Be in Rio - Praia",
+    "localizacao": "Ipanema",
+    "descricao": "O Be in Rio Gomes Carneiro Ipanema é um projeto moderno e de alto padrão, posicionado na divisa entre os bairros de Copacabana e Ipanema, uma região privilegiada conhecida como Copanema. Este empreendimento faz parte da coleção Be in Rio, que reúne lançamentos próximos a esses dois bairros cariocas icônicos, oferecendo uma experiência de moradia sofisticada e conveniente. Baixar Book Digital Entrar em Contat",
+    "endereco": "Rua Gomes Carneiro, 30, Ipanema",
+    "tags": [
+      "1 e 3 Quartos",
+      "Studios",
+      "Apartamentos",
+      "Coberturas Duplex"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Opportunity",
+    "logo": "https://drive.google.com/thumbnail?id=1WU2LgL2T6tQ2aFq_fXU7SENBKbtvtkJP&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1ytmSCUWe1R2uQxSVmD9sXgf0OG38b99P&sz=w1200",
+    "logoArquivo": "be-in-rio-praia-logo.webp",
+    "imagemArquivo": "beinriopraia.webp"
+  },
+  {
+    "id": 55,
+    "nome": "Be in Rio - Prudente de Morais",
+    "localizacao": "Ipanema",
+    "descricao": "Localizado na Rua Prudente de Morais, 1356, quase na esquina com a Rua Garcia D’Ávila, o Be in Rio Prudente 1356 se destaca por unir sofisticação, conforto e compromisso com a preservação do patrimônio histórico. O casarão original será parcialmente transformado em três unidades residenciais, enquanto o restante da estrutura abrigará espaços de uso comum.",
+    "endereco": "Rua Prudente de Morais, 1356, Ipanema",
+    "tags": [
+      "Studios",
+      "Double Suítes",
+      "Gardens",
+      "Coberturas"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Opportunity",
+    "logo": "https://drive.google.com/thumbnail?id=1MgmTXMoAdoCVFhtQv0__ectKNCmbujqw&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=19CtxEWGZJf19hCoLVy53tyTEZU_k73Fq&sz=w1200",
+    "logoArquivo": "be-in-rio-prudente-logo.webp",
+    "imagemArquivo": "beinrioprudentedemorais.webp"
+  },
+  {
+    "id": 56,
+    "nome": "Be in Rio - Tonelero",
+    "localizacao": "Copacabana",
+    "descricao": "Localizado na Rua Tonelero, 61, o Be In Rio Tonelero é um lançamento pensado para quem busca uma experiência de moradia moderna e funcional em um dos bairros mais icônicos do Rio de Janeiro. As 70 unidades são distribuídas em diferentes tipologias, atendendo a variados perfis de moradores, desde investidores até aqueles que desejam morar perto da praia com conforto e praticidade.",
+    "endereco": "Rua Tonelero, 61, Copacabana",
+    "tags": [
+      "Studios",
+      "Double Suítes",
+      "Gardens",
+      "Coberturas",
+      "UpGardens"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Opportunity",
+    "logo": "https://drive.google.com/thumbnail?id=1V8JjYoVsFt2p901YpQ8xlw7koYa0Zw8V&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1-Q_yesL27mcLZpJNam06XSeJVBbsOQh8&sz=w1200",
+    "logoArquivo": "be-in-rio-tonelero-logo.webp",
+    "imagemArquivo": "beinriotonelero.jpg"
+  },
+  {
+    "id": 57,
+    "nome": "Belavista",
+    "localizacao": "Ipanema",
+    "descricao": "O Bela Vista Ipanema residencial, assinado pela Opportunity, está situado na Rua Prudente de Morais, 1050, no coração de Ipanema. O projeto arquitetônico valoriza a luz natural e a integração com a paisagem, criando um ambiente elegante e acolhedor. Cada detalhe foi pensado para oferecer o máximo de conforto e exclusividade aos moradores, com apartamentos espaçosos e acabamentos de alto padrão.",
+    "endereco": "Rua Prudente de Morais, 1050, Ipanema",
+    "tags": [
+      "Apartamentos",
+      "4 Suítes",
+      "Varandas Panorâmicas",
+      "Área Privativa",
+      "Vagas",
+      "Lazer Completo"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Opportunity",
+    "logo": "https://drive.google.com/thumbnail?id=1zv7l-FZ_ezdCZ79N16w78c_xy73FlwG7&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1xCpt2V0jwPa0AAY7c2iLOajZ6C1XfMLt&sz=w1200",
+    "logoArquivo": "bela-vista-ipanema-logo.webp",
+    "imagemArquivo": "belavistaipanema.webp"
+  },
+  {
+    "id": 58,
+    "nome": "Blanc",
+    "localizacao": "Botafogo",
+    "descricao": "O Blanc 260 é o lançamento em Botafogo que contempla os mais altos padrões em relação à moradia, oferecendo a exclusividade de um condomínio com 34 imóveis amplos e com plantas inteligentes que se adequam ao estilo de vida de cada família.",
+    "endereco": "Rua Assunção, 260, Botafogo",
+    "tags": [
+      "3 e 4 Quartos",
+      "Coberturas Lineares",
+      "Apartamentos"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Opportunity",
+    "logo": "https://drive.google.com/thumbnail?id=164D69MIFDjM63prA2Dt_ti7siizsrUGJ&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1rlAWB0DrvQZMeJzvmsU-_cJUR2GRciyO&sz=w1200",
+    "logoArquivo": "blanc-260-logo.webp",
+    "imagemArquivo": "blanc260.webp"
+  },
+  {
+    "id": 59,
+    "nome": "Casa Mauá",
+    "localizacao": "Centro",
+    "descricao": "O Casa Mauá é um icônico empreendimento que irá integrar o exclusivo projeto Reviver Centro 2, que tem como propósito revitalizar edifícios no Centro do Rio de Janeiro. A arquitetura do residencial incorpora elementos modernos e clássicos, criando um visual retrofit elegante.",
+    "endereco": "Rua Visconde de Inhaúma, 95, Centro",
+    "tags": [
+      "Apartamentos",
+      "Lazer Completo"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Opportunity",
+    "logo": "https://drive.google.com/thumbnail?id=1rFzCcsgW-cfa4KRvGR61tZGf_m7CUqZk&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1m7LPSvnN3p4t7JiM-6g_S9NUBgdL_9ML&sz=w1200",
+    "logoArquivo": "casa-maua-logo.webp",
+    "imagemArquivo": "casamaua.webp"
+  },
+  {
+    "id": 60,
+    "nome": "Glória Residencial",
+    "localizacao": "Glória",
+    "descricao": "O Glória Residencial é um luxuoso empreendimento que ocupa o prédio do tradicional e imponente Hotel Glória, localizado em uma das regiões mais agradáveis da Zona Sul da capital carioca. O residencial esbanja uma impressionante apresentação visual em seu estilo retrofit, além de uma fachada em tons claros que agregam extrema sofisticação para o edifício.",
+    "endereco": "Rua do Russel, 632, Glória",
+    "tags": [
+      "2 e 4 Quartos",
+      "2 e 4 Suítes",
+      "3 Vagas",
+      "Lazer Completo"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Opportunity/SIG",
+    "logo": "https://drive.google.com/thumbnail?id=1XQzfEkuKB5aRiYvqpdorgXKuziYbGbhe&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1C2rmxxyP5Mra4j8JRbIu_KM7NIPU9rW0&sz=w1200",
+    "logoArquivo": "gloria-residencial-logo.webp",
+    "imagemArquivo": "gloriaresidencial.webp"
+  },
+  {
+    "id": 61,
+    "nome": "Green Park Barra",
+    "localizacao": "Barra da Tijuca",
+    "descricao": "O Green Park Barra, desenvolvido pela construtora Opportunity, está localizado na Avenida das Américas, 1510, no coração da Barra da Tijuca. O projeto apresenta um design contemporâneo, executado com materiais nobres e atenção aos detalhes, assegurando qualidade e sofisticação em cada espaço.",
+    "endereco": "Avenida das Américas, 1510, Barra da Tijuca",
+    "tags": [
+      "2 e 3 Quartos",
+      "Gardens",
+      "Coberturas"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Opportunity",
+    "logo": "https://drive.google.com/thumbnail?id=1FKtajwP1agSv3wKhCPSKNoMg7tKUcf9h&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1NBcL17p_Ju97Sh_poJLBsVmJcYccS1M7&sz=w1200",
+    "logoArquivo": "green-park-barra-logo.webp",
+    "imagemArquivo": "greenpark.webp"
+  },
+  {
+    "id": 62,
+    "nome": "Lineu 708",
+    "localizacao": "Lagoa",
+    "descricao": "O Lançamento da Performance e Opportunity, Lineu 708 Lagoa, é a novidade que surge para embelezar a paisagem urbana da Lagoa e oferecer um residencial confortável e repleto de comodidades para os moradores. Composto por uma fachada deslumbrante, arquitetura moderna e lazer completo, o empreendimento promete agradar aos padrões mais exigentes.",
+    "endereco": "Av. Lineu de Paula Machado, 708, Lagoa",
+    "tags": [
+      "4 Suítes",
+      "Varandas Gourmet"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Opportunity",
+    "logo": "https://drive.google.com/thumbnail?id=1EflZt_nUh8uzbeZ2GlUNL5SelJK82RLt&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1PL8Poui0GVN0sZgMiOk7rvaIElSCcpqx&sz=w1200",
+    "logoArquivo": "lineu-708-logo.webp",
+    "imagemArquivo": "lineu708.webp"
+  },
+  {
+    "id": 63,
+    "nome": "Nurban",
+    "localizacao": "Botafogo",
+    "descricao": "O Nurban Botafogo é um lançamento que apresenta um novo modo urbano em uma região em constante movimento. Ideal para pessoas que desejam viver em um bairro cosmopolita e acolhedor, o residencial fica na região mais moderna de Botafogo e agrada a quem busca por contemporaneidade e comodidade.",
+    "endereco": "Rua Fernandes Guimarães, 81, Botafogo",
+    "tags": [
+      "3 Suítes",
+      "2 Vagas",
+      "Infraestrutura Completo",
+      "Lazer Completo",
+      "Coberturas Duplex"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Opportunity",
+    "logo": "https://drive.google.com/thumbnail?id=1TlMrkXpseO6jSrmQyq6bdrhqRPPbdzJ9&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=15OcONIXxzp71J6rqO7zbfWI_dOnzlKQO&sz=w1200",
+    "logoArquivo": "nurban-logo.webp",
+    "imagemArquivo": "nurban.webp"
+  },
+  {
+    "id": 64,
+    "nome": "Ornato",
+    "localizacao": "Tijuca",
+    "descricao": "O lançamento Ornato, que ganhará espaço no bairro Tijuca, foi projetado para ser um autêntico ornamento artístico em um dos bairros mais tradicionais da Zona Norte do Rio de Janeiro. A localização é perfeita para famílias dinâmicas que amam estar próximas ao centro e das principais praias da cidade.",
+    "endereco": "Rua Dona Delfina, 78, Tijuca",
+    "tags": [
+      "2 e 4 Quartos",
+      "1 e 2 Suítes",
+      "Unidades. 2 Vagas"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Opportunity",
+    "logo": "https://drive.google.com/thumbnail?id=1WIJMdiZob3hY_SZKNZ5CaOA6IlKpFkYH&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1ard8I7jD7GDA05Lz1NrCPcucP7gWLVv4&sz=w1200",
+    "logoArquivo": "ornato-logo.webp",
+    "imagemArquivo": "ornato.webp"
+  },
+  {
+    "id": 65,
+    "nome": "Pb 50",
+    "localizacao": "Botafogo",
+    "descricao": "O PB 50 Botafogo é um empreendimento exclusivo e diferenciado na zona Sul do Rio de Janeiro, com apenas 14 unidades à venda e com localização privilegiada no bairro. Seus imóveis apresentam tipologias e metragens variadas que agradam aos padrões mais exigentes e acolhem as mais variadas configurações familiares.",
+    "endereco": "Rua Paulo Barreto, 50, Botafogo",
+    "tags": [
+      "2",
+      "3 e 4 Quartos",
+      "2 e 3 Suítes",
+      "1 Vagas",
+      "4 Suítes",
+      "2 Vagas"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Brix",
+    "logo": "https://drive.google.com/thumbnail?id=1je9OUeVA0j3U-A_aC3vBG3aQYMAL10Tg&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1_i_bfpduOSotbGGoeJeqruQZaUgTQQ9D&sz=w1200",
+    "logoArquivo": "pb-50-logo.webp",
+    "imagemArquivo": "pb50.webp"
+  },
+  {
+    "id": 66,
+    "nome": "RARO",
+    "localizacao": "Botafogo",
+    "descricao": "O Raro Palacete Art Deco Botafogo é um residencial moderno, sofisticado e conectado com o ambiente do bairro, tanto por sua infraestrutura que agrega casas e apartamentos quanto por seu design que reflete a história da região. A arquitetura, design e ambientação de interiores são assinadas por grandes profissionais do mercado imobiliário, resultando em um projeto que valoriza o bem-estar e o contato com o ar livre.",
+    "endereco": "Rua Visconde de Ouro Preto, 67, Botafogo",
+    "tags": [
+      "1",
+      "2 e 3 Quartos",
+      "2 Vagas",
+      "Gardens"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Brix",
+    "logo": "https://drive.google.com/thumbnail?id=1FiYMZgCpV-Km9tGHYQ1ME8L6BYs_4uZP&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1AoNfZ_zWTxW_DMssxd1RHCE2QxaO0ztp&sz=w1200",
+    "logoArquivo": "raro-logo.webp",
+    "imagemArquivo": "raro.webp"
+  },
+  {
+    "id": 67,
+    "nome": "S Design",
+    "localizacao": "Botafogo",
+    "descricao": "O S Design é a mais recente novidade em Botafogo, um dos bairros mais desejados para moradia no Rio de Janeiro. O residencial é composto por imóveis de metragens generosas e oferece segurança, lazer e proximidade a todos os pontos de referência da região.",
+    "endereco": "Rua Conde de Irajá, 439, Botafogo",
+    "tags": [
+      "3 e 4 Quartos",
+      "2 e 3 Suítes",
+      "Vagas",
+      "Coberturas Lineares",
+      "4 e 5 Suítes"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Opportunity",
+    "logo": "https://drive.google.com/thumbnail?id=1E3Z6xy_4RBj1DDn8PeP7np1KNZ-ycNOV&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1F92M4iVMZ0nd3LLr35YTrwAUxRGGQ2Sb&sz=w1200",
+    "logoArquivo": "s-design-logo.webp",
+    "imagemArquivo": "sdesign.webp"
+  },
+  {
+    "id": 68,
+    "nome": "Tiê",
+    "localizacao": "Tijuca",
+    "descricao": "O Tiê Residencial Tijuca é uma fusão de elegância e tradição no coração deste bairro emblemático. Com apartamentos de 2 a 4 quartos, este empreendimento é um verdadeiro condomínio clube, harmonizando inovação com a autenticidade tijucana.",
+    "endereco": "Rua Homem de Melo, 169, Tijuca",
+    "tags": [
+      "2 e 4 Quartos",
+      "1 e 2 Suítes",
+      "Lazer Completo"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Opportunity",
+    "logo": "https://drive.google.com/thumbnail?id=1tBmAdfCKeL74E7NszA8i7bxC_P405OGw&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1QT3yXR03UFbFai5lDCODGJ-SR5Z-lMzY&sz=w1200",
+    "logoArquivo": "tie-logo.webp",
+    "imagemArquivo": "tieresidencial.webp"
+  },
+  {
+    "id": 69,
+    "nome": "Vista Ipanema",
+    "localizacao": "Ipanema",
+    "descricao": "O recente lançamento Vista Ipanema é um empreendimento inovador e ideal para pessoas exigentes. Composto por apartamentos muito amplos e sofisticados, o luxuoso condomínio agrega lazer, exclusividade e segurança de forma única.",
+    "endereco": "Rua Prudente de Morais, 281, Ipanema",
+    "tags": [
+      "3 e 4 Suítes",
+      "3 Vagas",
+      "Lazer Completo"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Opportunity",
+    "logo": "https://drive.google.com/thumbnail?id=1-d_VIVeK5llLo6Xab91A-i7wwK1uSWZj&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1BMbOD-7qYnAge7aF5g4VEWZsLudgIUn7&sz=w1200",
+    "logoArquivo": "vista-ipanema-logo.webp",
+    "imagemArquivo": "vistaipanema.webp"
+  },
+  {
+    "id": 70,
+    "nome": "Zenture",
+    "localizacao": "Botafogo",
+    "descricao": "O Zenture Residencial é o mais recente e luxuoso lançamento em uma das regiões mais agradáveis para se viver em Botafogo. O empreendimento é a chance perfeita para famílias que desejam um condomínio de alto padrão com tudo o que é essencial para uma maior qualidade de vida, pois sua infraestrutura agrega lazer, serviços e segurança de forma única.",
+    "endereco": "Rua Sorocaba, 436, Botafogo",
+    "tags": [
+      "3 a 4 Quartos",
+      "1 e 3 Suítes",
+      "2 e 3 Vagas",
+      "Lazer Completo"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Opportunity",
+    "logo": "https://drive.google.com/thumbnail?id=1bq0X5oIbUqSv7UaCMaHv2ZPyfB6DChP7&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1lMtwUVvFMvOluUhxJo5FJia14-GNPTKm&sz=w1200",
+    "logoArquivo": "zenture-logo.webp",
+    "imagemArquivo": "zenturebotafogo.webp"
+  },
+  {
+    "id": 71,
+    "nome": "OKRE",
+    "localizacao": "Humaitá",
+    "descricao": "O Okre Alto Humaitá possui 9 unidades de apartamentos com metragens que variam entre 76 e 108m². Com opções de 2 ou 3 quartos, os imóveis oferecem amplos cômodos, varandas gourmet, e vagas de garagem. O condomínio inclui uma área de lazer completa com bicicletário, pet care, e sistemas de segurança.",
+    "endereco": "Rua Engenheiro Marques Porto, 51, Humaitá",
+    "tags": [
+      "2 e 3 Quartos",
+      "Varandas Gourmet",
+      "Vagas"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Ben",
+    "logo": "https://drive.google.com/thumbnail?id=1UEO5DlFhk8oqNMeZ8T48upcZLdO-mDt5&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1h9wk-A2A8ohtYS_E3H-GsKHay9TrXI9O&sz=w1200",
+    "logoArquivo": "okre-logo.webp",
+    "imagemArquivo": "okrealtohumaita.webp"
+  },
+  {
+    "id": 72,
+    "nome": "Glória Del'Art",
+    "localizacao": "Glória",
+    "descricao": "O Glória Del Art Co Living é um lançamento residencial situado no bairro Glória, próxima à Zona Sul carioca. Retrofit da antiga Rádio Globo, o empreendimento é composto por imóveis acolhedores e conta com inúmeros diferenciais em serviços para tornar a vida dos moradores muito mais prática, além de apresentar um excelente custo-benefício para a aquisição dos apartamentos.",
+    "endereco": "Rua do Russel, 426, Glória",
+    "tags": [
+      "1 e 2 Quartos",
+      "Vagas"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "Valente",
+    "logo": "https://drive.google.com/thumbnail?id=1q7FO2opREh__HiSqGt2KTxwN-57n2Qag&sz=w1200",
+    "imagem": "https://drive.google.com/thumbnail?id=1QI_mxpqaemw53TXjcRsMKwCP9q8gpq6V&sz=w1200",
+    "logoArquivo": "gloria-del-art-logo.webp",
+    "imagemArquivo": "gloriadelart.webp"
+  },
+  {
+    "id": 73,
+    "nome": "Orla Ipanema",
+    "localizacao": "Ipanema",
+    "descricao": "Localizado na Rua Prudente de Morais, 1788, o Orla Ipanema é desenvolvido pela construtora TGB. O projeto reúne 52 unidades residenciais e 2 lojas, em um empreendimento que equilibra praticidade, exclusividade e sofisticação.",
+    "endereco": "Rua Prudente de Morais, 1788, Ipanema",
+    "tags": [
+      "Studios",
+      "Double Suítes",
+      "Gardens",
+      "Coberturas"
+    ],
+    "book": "",
+    "masterplan": "",
+    "videos": "",
+    "status": "Pendente",
+    "imobiliaria": "TGB",
+    "logo": "",
+    "imagem": "",
+    "logoArquivo": "",
+    "imagemArquivo": ""
+  }
+];
+
+    const FAQS = [
+      {
+        q: 'Quais documentos o cliente precisa para comprar?',
+        a: '🪪 Identificação: RG e CPF; 💍 Estado Civil: Certidão de Nascimento ou Casamento (obrigatório para financiamento Caixa); 💰 Renda: 3 últimos holerites ou Declaração de Imposto de Renda; 🏠 Residência: Comprovante atualizado; 🏦 FGTS: Extrato atualizado (caso pretenda utilizar o saldo).'
+      },
+      {
+        q: 'Como funciona o financiamento Caixa Econômica Federal?',
+        a: 'A Caixa analisa renda, documentação e capacidade de pagamento. Depois da aprovação do crédito, o contrato é emitido conforme as condições do empreendimento e da modalidade escolhida.'
+      },
+      {
+        q: 'Posso usar o FGTS para comprar?',
+        a: 'Sim, desde que o cliente tenha trabalhado em regime CLT por pelo menos 3 anos, não tenha outro imóvel financiado pelo SFH na mesma cidade e o imóvel seja para uso próprio.'
+      },
+      {
+        q: 'Qual é o prazo de entrega e o que acontece se atrasar?',
+        a: 'O contrato prevê tolerância de 180 dias além da data prevista. Se não entregue nesse prazo, o cliente tem direito à multa contratual. O prazo de cada empreendimento está na ficha do produto.'
+      },
+      {
+        q: 'O imóvel na planta valoriza?',
+        a: 'Historicamente, imóveis comprados na planta apresentam valorização média até a entrega, dependendo da localização e do mercado. A valorização pode variar por produto e região.'
+      },
+      {
+        q: 'O empreendimento tem área de lazer?',
+        a: 'Cada empreendimento possui diferenciais próprios. As opções podem incluir piscina, academia, salão de festas, playground, espaço gourmet e outras áreas. Consulte a ficha do produto para detalhes.'
+      },
+      {
+        q: 'É possível comprar como investimento?',
+        a: 'Sim. Além da possível valorização até a entrega, o imóvel pode ser colocado para locação após a entrega, gerando renda mensal.'
+      },
+      {
+        q: 'Qual a diferença entre MCMV e SBPE?',
+        a: 'MCMV é destinado a famílias de renda mais acessível e pode oferecer condições diferenciadas. SBPE atende faixas de renda superiores, com taxas e condições conforme análise de crédito e perfil do cliente.'
+      }
+    ];
+
+    let termoBusca = '';
+    let filtroBairro = 'todos';
+    let filtroImob = 'todos';
+    let filtroRapido = 'todos';
+    let viewAtual = 'grid';
+
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => [...document.querySelectorAll(sel)];
+
+    function escapeHtml(str) {
+      return String(str ?? '').replace(/[&<>"']/g, s => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+      }[s]));
+    }
+
+    function normalizar(str) {
+      return String(str || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim();
+    }
+
+    function iniciais(nome) {
+      return String(nome || 'MC').split(/\s+/).filter(Boolean).slice(0,2).map(p => p[0]).join('').toUpperCase();
+    }
+
+    function googleMapsLink(endereco) {
+      if (!endereco) return '#';
+      return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(endereco);
+    }
+
+    function linkBtn(url, label, classe) {
+      const disabled = !url ? ' disabled' : '';
+      return `<a class="link-btn ${classe}${disabled}" href="${url || '#'}" target="_blank" rel="noopener">${label}</a>`;
+    }
+
+    function getSearchText(e) {
+      return normalizar([e.nome, e.localizacao, e.imobiliaria, e.descricao, e.endereco, ...(e.tags || [])].join(' '));
+    }
+
+    function filtrados() {
+      return EMPREENDIMENTOS.filter(e => {
+        const okBusca = !termoBusca || getSearchText(e).includes(normalizar(termoBusca));
+        const okBairro = filtroBairro === 'todos' || e.localizacao === filtroBairro;
+        const okImob = filtroImob === 'todos' || e.imobiliaria === filtroImob;
+        const okRapido = filtroRapido === 'todos'
+          || e.localizacao === filtroRapido
+          || e.imobiliaria === filtroRapido
+          || (e.tags || []).includes(filtroRapido);
+        return okBusca && okBairro && okImob && okRapido;
+      });
+    }
+
+    function buildFilters() {
+      const bairros = [...new Set(EMPREENDIMENTOS.map(e => e.localizacao).filter(Boolean))].sort((a,b) => a.localeCompare(b));
+      const imobs = [...new Set(EMPREENDIMENTOS.map(e => e.imobiliaria).filter(Boolean))].sort((a,b) => a.localeCompare(b));
+
+      $('#bairroFilter').innerHTML = '<option value="todos">Todos os bairros</option>' + bairros.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join('');
+      $('#imobFilter').innerHTML = '<option value="todos">Todas as imobiliárias</option>' + imobs.map(i => `<option value="${escapeHtml(i)}">${escapeHtml(i)}</option>`).join('');
+
+      const principais = ['todos', ...imobs.slice(0, 8)];
+      $('#quickFilters').innerHTML = principais.map((f, i) => {
+        const label = f === 'todos' ? 'Todos' : f;
+        return `<button class="chip ${i === 0 ? 'active' : ''}" data-filter="${escapeHtml(f)}">${escapeHtml(label)}</button>`;
+      }).join('');
+    }
+
+    function render() {
+      const lista = filtrados();
+      $('#resultsCount').textContent = `${lista.length} empreendimento${lista.length !== 1 ? 's' : ''}`;
+      renderCards(lista);
+      renderList(lista);
+      renderMapList(lista, '#mapCards');
+      renderFullList();
+      renderMapList(EMPREENDIMENTOS, '#addressCards', 18);
+    }
+
+    function renderCards(lista) {
+      $('#cardsGrid').innerHTML = lista.map((e) => {
+        const idx = EMPREENDIMENTOS.indexOf(e);
+        const logo = e.logo
+          ? `<img class="card-logo" src="${escapeHtml(e.logo)}" alt="Logo ${escapeHtml(e.nome)}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';"><div class="card-placeholder" style="display:none">${iniciais(e.nome)}</div>`
+          : `<div class="card-placeholder">${iniciais(e.nome)}</div>`;
+        return `<article class="project-card" onclick="abrirModal(${idx})">
+          <div class="card-logo-area">
+            <span class="status-pill">🏢 Em obras</span>
+            ${logo}
+          </div>
+          <div class="card-body">
+            <div class="card-title">🏙 ${escapeHtml(e.nome)}</div>
+            <div class="card-local">📍 ${escapeHtml(e.localizacao || 'Local não informado')}</div>
+            <div class="card-meta">
+              <span class="mini-tag">${escapeHtml(e.imobiliaria || 'Imobiliária')}</span>
+              ${(e.tags || []).slice(0, 1).map(t => `<span class="mini-tag">${escapeHtml(t)}</span>`).join('')}
+            </div>
+          </div>
+        </article>`;
+      }).join('');
+    }
+
+    function renderList(lista) {
+      $('#listBody').innerHTML = lista.map(e => {
+        const idx = EMPREENDIMENTOS.indexOf(e);
+        return `<tr onclick="abrirModal(${idx})">
+          <td class="td-name">${escapeHtml(e.nome)}</td>
+          <td>${escapeHtml(e.localizacao)}</td>
+          <td>${escapeHtml(e.imobiliaria)}</td>
+          <td>${escapeHtml(e.status || 'Pendente')}</td>
+          <td>${escapeHtml(e.endereco || '—')}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    function renderFullList() {
+      $('#fullListBody').innerHTML = EMPREENDIMENTOS.map((e, i) => `<tr onclick="abrirModal(${i})">
+        <td>${i + 1}</td>
+        <td class="td-name">${escapeHtml(e.nome)}</td>
+        <td>${escapeHtml(e.localizacao)}</td>
+        <td>${escapeHtml(e.imobiliaria)}</td>
+        <td>${escapeHtml(e.endereco || '—')}</td>
+      </tr>`).join('');
+    }
+
+    function renderMapList(lista, target, limite) {
+      const subset = limite ? lista.slice(0, limite) : lista;
+      $(target).innerHTML = subset.map(e => {
+        const idx = EMPREENDIMENTOS.indexOf(e);
+        const maps = googleMapsLink(e.endereco);
+        return `<div class="map-card">
+          <h3>${escapeHtml(e.nome)}</h3>
+          <p>📍 ${escapeHtml(e.endereco || e.localizacao || 'Endereço não informado')}</p>
+          <a href="${maps}" target="_blank" rel="noopener">Abrir no Google Maps</a>
+          <a style="margin-left:6px;background:rgba(214,179,90,.16);color:#f5e8ba;border-color:rgba(214,179,90,.28)" href="javascript:void(0)" onclick="abrirModal(${idx})">Ver ficha</a>
+        </div>`;
+      }).join('');
+    }
+
+    function abrirModal(idx) {
+      const e = EMPREENDIMENTOS[idx];
+      const hero = e.imagem
+        ? `<img src="${escapeHtml(e.imagem)}" alt="Imagem do empreendimento ${escapeHtml(e.nome)}" loading="lazy" onerror="this.closest('.modal-hero-img').innerHTML='<div class=&quot;modal-hero-fallback&quot;>${escapeHtml(e.nome)}</div>';">`
+        : `<div class="modal-hero-fallback">${escapeHtml(e.nome)}</div>`;
+
+      const logo = e.logo
+        ? `<img src="${escapeHtml(e.logo)}" alt="Logo ${escapeHtml(e.nome)}" loading="lazy" onerror="this.parentElement.innerHTML='${iniciais(e.nome)}';">`
+        : `<span style="color:#fff;font-weight:900;font-size:22px">${iniciais(e.nome)}</span>`;
+
+      const tags = (e.tags && e.tags.length)
+        ? `<div class="tag-row">${e.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>`
+        : '';
+
+      $('#modalContent').innerHTML = `
+        <div class="modal-hero-img">${hero}</div>
+        <div class="modal-header">
+          <div class="modal-logo">${logo}</div>
+          <div>
+            <div class="modal-title">${escapeHtml(e.nome)}</div>
+            <div class="modal-local">📍 ${escapeHtml(e.localizacao || 'Local não informado')}</div>
+            <div class="badges">
+              <span class="badge">${escapeHtml(e.imobiliaria || 'Imobiliária')}</span>
+              <span class="badge status">🏢 Em obras</span>
+            </div>
+          </div>
+        </div>
+        ${e.endereco ? `<div class="modal-box">📍 ${escapeHtml(e.endereco)}</div>` : ''}
+        ${e.descricao ? `<div class="modal-box">${escapeHtml(e.descricao)}</div>` : ''}
+        ${tags}
+        <div class="modal-links">
+          ${linkBtn(e.book, '📚 Book', 'link-book')}
+          ${linkBtn(e.masterplan, '🗺 Masterplan', 'link-master')}
+          ${linkBtn(googleMapsLink(e.endereco), '📍 Localização', 'link-local')}
+          ${linkBtn(e.videos, '▶ Vídeos', 'link-video')}
+        </div>
+      `;
+      $('#modalOverlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function fecharModal() {
+      $('#modalOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function closeModalBg(ev) {
+      if (ev.target.id === 'modalOverlay') fecharModal();
+    }
+
+    function toggleSidebar() {
+      $('#sidebar').classList.add('open');
+      $('#sidebarOverlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeSidebar() {
+      $('#sidebar').classList.remove('open');
+      $('#sidebarOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function toggleFaq(i) {
+      $('#faq-a-' + i).classList.toggle('open');
+    }
+
+    function renderFAQ() {
+      $('#faqList').innerHTML = FAQS.map((f, i) => `<div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(${i})"><span>${escapeHtml(f.q)}</span><span>+</span></div>
+        <div class="faq-a" id="faq-a-${i}">${escapeHtml(f.a)}</div>
+      </div>`).join('');
+    }
+
+    $('#searchInput').addEventListener('input', e => {
+      termoBusca = e.target.value;
+      render();
+    });
+
+    $('#bairroFilter').addEventListener('change', e => {
+      filtroBairro = e.target.value;
+      render();
+    });
+
+    $('#imobFilter').addEventListener('change', e => {
+      filtroImob = e.target.value;
+      render();
+    });
+
+    $('#clearFilters').addEventListener('click', () => {
+      termoBusca = '';
+      filtroBairro = 'todos';
+      filtroImob = 'todos';
+      filtroRapido = 'todos';
+      $('#searchInput').value = '';
+      $('#bairroFilter').value = 'todos';
+      $('#imobFilter').value = 'todos';
+      $$('.chip').forEach(c => c.classList.toggle('active', c.dataset.filter === 'todos'));
+      render();
+    });
+
+    $('#quickFilters').addEventListener('click', e => {
+      const chip = e.target.closest('.chip');
+      if (!chip) return;
+      filtroRapido = chip.dataset.filter;
+      $$('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      render();
+    });
+
+    $$('.view-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        $$('.view-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        viewAtual = btn.dataset.view;
+        $('#cardsGrid').style.display = viewAtual === 'grid' ? 'grid' : 'none';
+        $('#listView').style.display = viewAtual === 'list' ? 'block' : 'none';
+        $('#mapView').style.display = viewAtual === 'map' ? 'block' : 'none';
+      });
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        fecharModal();
+        closeSidebar();
+      }
+    });
+
+    buildFilters();
+    renderFAQ();
+    render();
+
+    </script>
+</body>
+</html>
