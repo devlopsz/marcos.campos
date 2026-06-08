@@ -2360,7 +2360,7 @@
       renderCards(lista);
       renderList(lista);
       renderMapList(lista, '#mapCards');
-      renderFullList();
+      renderFullList(lista);
       renderMapList(EMPREENDIMENTOS, '#addressCards', 18);
     }
 
@@ -2400,14 +2400,17 @@
       }).join('');
     }
 
-    function renderFullList() {
-      $('#fullListBody').innerHTML = EMPREENDIMENTOS.map((e, i) => `<tr onclick="abrirModal(${i})">
-        <td>${i + 1}</td>
-        <td class="td-name">${escapeHtml(e.nome)}</td>
-        <td>${escapeHtml(e.localizacao)}</td>
-        <td>${escapeHtml(e.imobiliaria)}</td>
-        <td>${escapeHtml(e.endereco || '—')}</td>
-      </tr>`).join('');
+    function renderFullList(lista) {
+      $('#fullListBody').innerHTML = lista.map((e, i) => {
+        const idx = EMPREENDIMENTOS.indexOf(e);
+        return `<tr onclick="abrirModal(${idx})">
+          <td>${i + 1}</td>
+          <td class="td-name">${escapeHtml(e.nome)}</td>
+          <td>${escapeHtml(e.localizacao)}</td>
+          <td>${escapeHtml(e.imobiliaria)}</td>
+          <td>${escapeHtml(e.endereco || '—')}</td>
+        </tr>`;
+      }).join('');
     }
 
     function renderMapList(lista, target, limite) {
